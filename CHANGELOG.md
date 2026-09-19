@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Verification evidence 若附帶 `quality_summary`，現在會驗證 v1 schema、Full profile、完整 candidate SHA 綁定，以及非空且全為 boolean 的 gates；`verified` 不再接受 Quick、錯誤 commit 或失敗 gate 的摘要。
 - 「相關工具」交叉連結由四層改為五層：補上供應鏈層 `SkillSpector`（agent skill 在裝進來之前的掃描），這一層原本缺席，讓整條鏈從「已經裝好之後才開始管」開始講。旁註同時區分 `agent-governance-toolkit` 治理的是上線後自主運行的 agent，與這五層治理的 coding agent 是不同範圍。
 - CodeQL 改用 `security-extended`：Security 分頁只保留安全告警，品質問題由既有 lint 與測試 gate 負責。
 - `build` 開發依賴下限 1.5 → 1.6（依賴新鮮度檢查唯一一筆待審視；實裝 1.6.0 後 2545 passed / 63 skipped）。

@@ -271,6 +271,68 @@ class VerificationEvidenceWriterTests(unittest.TestCase):
                         }
                     )
 
+    def test_validate_verification_evidence_with_quality_summary(self) -> None:
+        from paulsha_cortex.coordinator import verification
+
+        valid_summary = {
+            "schema_version": 1,
+            "profile": "full",
+            "commit": "a" * 40,
+            "passed": True,
+            "gates": {"coverage": True, "tests": True, "complexity": True, "module_size": True},
+            "coverage": {"percent": 98.5},
+        }
+        res = verification.validate_verification_evidence(
+            {
+                "schema_version": 1,
+                "slice_id": "slice-quality",
+                "candidate": "a" * 40,
+                "status": "verified",
+                "summary": "full-gate-passed",
+                "details": {"quality_summary": valid_summary},
+            }
+        )
+        self.assertEqual(res["details"]["quality_summary"]["passed"], True)
+
+        for field, value, message in (
+            ("profile", "quick", "profile must be 'full'"),
+            ("commit", "b" * 40, "commit must match verification evidence candidate"),
+            ("gates", {"tests": "yes"}, "gate values must be boolean"),
+        ):
+            invalid_summary = dict(valid_summary)
+            invalid_summary[field] = value
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, message):
+                verification.validate_verification_evidence(
+                    {
+                        "schema_version": 1,
+                        "slice_id": "slice-quality",
+                        "candidate": "a" * 40,
+                        "status": "verified",
+                        "summary": "full-gate-passed",
+                        "details": {"quality_summary": invalid_summary},
+                    }
+                )
+
+        with self.assertRaisesRegex(ValueError, "status cannot be 'verified' when quality_summary passed is False"):
+            verification.validate_verification_evidence(
+                {
+                    "schema_version": 1,
+                    "slice_id": "slice-quality",
+                    "candidate": "a" * 40,
+                    "status": "verified",
+                    "summary": "full-gate-failed",
+                    "details": {
+                        "quality_summary": {
+                            "schema_version": 1,
+                            "profile": "full",
+                            "commit": "a" * 40,
+                            "passed": False,
+                            "gates": {"tests": False},
+                        }
+                    },
+                }
+            )
+
     def test_write_verification_evidence_is_idempotent_for_identical_content(self) -> None:
         from paulsha_cortex.coordinator import verification
 
