@@ -409,13 +409,39 @@ def validate_verification_evidence(payload: object) -> dict[str, Any]:
     details = payload.get("details")
     if not isinstance(details, dict):
         raise ValueError("verification evidence details must be an object")
+    normalized_details = copy.deepcopy(details)
+    if "quality_summary" in normalized_details:
+        qs = normalized_details["quality_summary"]
+        if not isinstance(qs, dict):
+            raise ValueError("quality_summary in verification details must be an object")
+        if qs.get("schema_version") != 1:
+            raise ValueError("quality_summary schema_version must be 1")
+        if qs.get("profile") != "full":
+            raise ValueError("quality_summary profile must be 'full'")
+        quality_commit = qs.get("commit")
+        if not isinstance(quality_commit, str) or SAFE_SHA_RE.fullmatch(quality_commit) is None:
+            raise ValueError("quality_summary commit must be a full commit SHA")
+        if quality_commit.lower() != candidate.lower():
+            raise ValueError("quality_summary commit must match verification evidence candidate")
+        if "passed" not in qs or not isinstance(qs["passed"], bool):
+            raise ValueError("quality_summary must contain boolean 'passed' field")
+        gates = qs.get("gates")
+        if not isinstance(gates, dict) or not gates:
+            raise ValueError("quality_summary 'gates' must be a non-empty object")
+        if any(not isinstance(value, bool) for value in gates.values()):
+            raise ValueError("quality_summary gate values must be boolean")
+        if status == "verified" and qs.get("passed") is False:
+            raise ValueError("verification evidence status cannot be 'verified' when quality_summary passed is False")
+        if status == "verified" and not all(gates.values()):
+            raise ValueError("verification evidence status cannot be 'verified' when a quality_summary gate failed")
+        qs["commit"] = quality_commit.lower()
     return {
         "schema_version": VERIFICATION_SCHEMA_VERSION,
         "slice_id": slice_id,
         "candidate": candidate.lower(),
         "status": status,
         "summary": summary,
-        "details": copy.deepcopy(details),
+        "details": normalized_details,
     }
 
 
