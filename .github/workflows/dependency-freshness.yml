@@ -1,7 +1,7 @@
 name: Dependency freshness
 
 # Dependabot 一次回答一個套件「有沒有新版」，回答不了「整包宣告落後多少」。
-# 這支每月盤點一次 pyproject.toml 的直接依賴，只讀不改。
+# 這支每月盤點一次 pyproject.toml 的直接依賴，並比對上游 policy 引擎版本，只讀不改。
 
 on:
   push:
@@ -50,11 +50,36 @@ jobs:
           --github-output
           --output dependency-freshness-report.md
 
+      - name: Check upstream policy engine
+        id: engine
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # 本 repo 用 SanHsien/paulsha-conventions（上游 v1.0.15 + agent_files 設定）。
+          # 上游 VERSION 超過這個基準時，要把 fork 分支 rebase 到新版並重新 pin。
+          ENGINE_BASE: "1.0.15"
+          UPSTREAM_ENGINE: hamanpaul/paulsha-conventions
+        run: |
+          upstream="$(gh api "repos/${UPSTREAM_ENGINE}/contents/VERSION" --jq .content | base64 -d | tr -d '[:space:]')"
+          {
+            echo
+            echo "## Upstream policy engine"
+            echo
+            echo "- Upstream \`${UPSTREAM_ENGINE}\` VERSION: \`${upstream}\`"
+            echo "- Fork base: \`${ENGINE_BASE}\`"
+          } >> dependency-freshness-report.md
+          if [ "$upstream" != "$ENGINE_BASE" ]; then
+            echo "- 上游引擎有新版：更新 SanHsien/paulsha-conventions fork 分支後重新 pin policy-check.yml。" >> dependency-freshness-report.md
+            echo "needs_attention=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_attention=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Append open Dependabot pull requests
         id: tracker
         env:
           GH_TOKEN: ${{ github.token }}
           CHECKER_NEEDS_ATTENTION: ${{ steps.deps.outputs.needs_attention }}
+          ENGINE_NEEDS_ATTENTION: ${{ steps.engine.outputs.needs_attention }}
         run: |
           open_prs="$(gh pr list \
             --state open \
@@ -62,6 +87,9 @@ jobs:
             --json number,title,url)"
           open_pr_count="$(jq 'length' <<< "$open_prs")"
           needs_attention="$CHECKER_NEEDS_ATTENTION"
+          if [ "$ENGINE_NEEDS_ATTENTION" = "true" ]; then
+            needs_attention="true"
+          fi
           {
             echo
             echo "## Open Dependabot pull requests"

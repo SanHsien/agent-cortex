@@ -13,8 +13,14 @@ code_paths:
   - ".github/**"
 agent_files:
   mode: symlink
+  # SanHsien fork 引擎設定：AGENTS.md 為唯一真檔，不放 CLAUDE.md。
+  canonical: AGENTS.md
+  required:
+    - AGENTS.md
+    - GEMINI.md
+    - .github/copilot-instructions.md
 conventions_engine:
-  repo: hamanpaul/paulsha-conventions
+  repo: SanHsien/paulsha-conventions
 preflight:
   steps:
     - name: openspec
