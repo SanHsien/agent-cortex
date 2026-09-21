@@ -60,7 +60,7 @@ Stop/restart 在送出 `taskkill` 前會用 process command line 驗證 PID 確�
 
 ## Windows checkout 與 symlink
 
-`.gitattributes` 強制文字檔使用 LF，保護仍保留的 Bash/systemd 相容檔案。本 fork 以 `AGENTS.md` 為唯一真檔（不放 `CLAUDE.md`），`GEMINI.md` 與 `.github/copilot-instructions.md` 記錄為指向 `AGENTS.md` 的 Git symlink；Windows 若未啟用 Developer Mode，可能呈現為只含 `AGENTS.md` 的一般檔案，不要編輯或提交這些鏡像。
+`.gitattributes` 強制文字檔使用 LF，保護仍保留的 Bash/systemd 相容檔案。本 fork 以 `AGENTS.md` 為唯一真檔（不另放 Claude 專用指令檔），`GEMINI.md` 與 `.github/copilot-instructions.md` 記錄為指向 `AGENTS.md` 的 Git symlink；Windows 若未啟用 Developer Mode，可能呈現為只含 `AGENTS.md` 的一般檔案，不要編輯或提交這些鏡像。
 
 ## 目錄
 
