@@ -32,7 +32,7 @@
 
 ## 5. 驗證仍由 repo 契約決定
 
-- `tools/dev_check.ps1`／`.sh` 是一致入口，不取代 `CLAUDE.md` 的 changelog、PR-context policy check 與 Candidate evidence 規則。
+- `tools/dev_check.ps1`／`.sh` 是一致入口，不取代 `AGENTS.md` 的 changelog、PR-context policy check 與 Candidate evidence 規則。
 - 每次只接受同一 Candidate 的一次權威 full gate；失敗後只重跑受影響的 focused test，再做一次完整收尾。
 - WSL `/mnt/c` 的慢速不是測試失敗；但 timeout 或 skipped checks 必須如實記錄，不能包裝成通過。
 

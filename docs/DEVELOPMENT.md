@@ -41,7 +41,7 @@ pwsh -File tools/dev_check.ps1 -Quick
 4. wheel/sdist build
 5. `twine check --strict`
 
-Linux 開發者仍可使用 `tools/bootstrap_dev.sh` 與 `tools/dev_check.sh`。兩邊都必須遵守 `CLAUDE.md` 的 changelog、PR context、Candidate 與 review evidence 契約。
+Linux 開發者仍可使用 `tools/bootstrap_dev.sh` 與 `tools/dev_check.sh`。兩邊都必須遵守 `AGENTS.md` 的 changelog、PR context、Candidate 與 review evidence 契約。
 
 ## Windows service/runtime
 
@@ -60,7 +60,7 @@ Stop/restart 在送出 `taskkill` 前會用 process command line 驗證 PID 確�
 
 ## Windows checkout 與 symlink
 
-`.gitattributes` 強制文字檔使用 LF，保護仍保留的 Bash/systemd 相容檔案。upstream 將 `AGENTS.md`、`GEMINI.md` 與 `.github/copilot-instructions.md` 記錄為指向 `CLAUDE.md` 的 Git symlink；Windows 若未啟用 Developer Mode，可能呈現為只含 `CLAUDE.md` 的一般檔案，不要編輯或提交這些鏡像。
+`.gitattributes` 強制文字檔使用 LF，保護仍保留的 Bash/systemd 相容檔案。本 fork 以 `AGENTS.md` 為唯一真檔（不放 `CLAUDE.md`），`GEMINI.md` 與 `.github/copilot-instructions.md` 記錄為指向 `AGENTS.md` 的 Git symlink；Windows 若未啟用 Developer Mode，可能呈現為只含 `AGENTS.md` 的一般檔案，不要編輯或提交這些鏡像。
 
 ## 目錄
 
@@ -82,7 +82,7 @@ Stop/restart 在送出 `taskkill` 前會用 process command line 驗證 PID 確�
 2. 行為變更先補 regression test，再做最小修正。
 3. 同一 PR 新增 `changelog.d/<slug>.md`，同步更新 `CHANGELOG.md` 的 `[Unreleased]`。
 4. 執行 `pwsh -File tools/dev_check.ps1`。
-5. 依 `CLAUDE.md` 帶完整 PR context 執行 policy check。
+5. 依 `AGENTS.md` 帶完整 PR context 執行 policy check。
 6. Review 必須綁定最新 Candidate；process exit 0 或 agent 自報通過不能取代 evidence。
 
 ## 依賴新鮮度：紅燈的兩條正當出口
