@@ -203,7 +203,7 @@ pwsh -File tools/dev_check.ps1 -Quick
 python -m pytest tests/ -q
 ```
 
-CI 同時涵蓋 tests、persona scope、policy check、CodeQL，以及 dependency / upstream maintenance workflows。修改前請先閱讀 [CLAUDE.md](CLAUDE.md) 與 `.project-policy.yml`；本 repo 的 Markdown 也屬 policy `code_paths`，因此 PR 必須遵守 changelog fragment 與 policy gate。
+CI 同時涵蓋 tests、persona scope、policy check、CodeQL，以及 dependency / upstream maintenance workflows。修改前請先閱讀 [AGENTS.md](AGENTS.md) 與 `.project-policy.yml`；本 repo 的 Markdown 也屬 policy `code_paths`，因此 PR 必須遵守 changelog fragment 與 policy gate。
 
 ## Version
 

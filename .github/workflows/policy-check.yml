@@ -9,8 +9,10 @@ permissions:
 
 jobs:
   policy:
-    uses: hamanpaul/paulsha-conventions/.github/workflows/reusable-policy-check.yml@a764806046c410eb4f254ac0b6a8aec8b7559dab  # v1.0.15
+    # SanHsien fork = 上游 v1.0.15 + 可設定的 canonical agent file；上游新版由 dependency-freshness 比對。
+    uses: SanHsien/paulsha-conventions/.github/workflows/reusable-policy-check.yml@4e6621e92dda1538fa980ebcb4f82ea3dc9fe916  # v1.0.15
     with:
       policy_profile: flat
       policy_version: "1.0.15"
-      policy_engine_ref: a764806046c410eb4f254ac0b6a8aec8b7559dab
+      policy_engine_ref: 4e6621e92dda1538fa980ebcb4f82ea3dc9fe916
+      policy_engine_repo: SanHsien/paulsha-conventions
