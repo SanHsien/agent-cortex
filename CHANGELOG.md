@@ -9,6 +9,7 @@
 
 ### Changed
 
+- Policy 引擎升到上游 v1.0.17（SanHsien fork，保留可設定 canonical agent file 補丁），`policy_version` 同步為 1.0.17。
 - Agent 慣例檔改以 `AGENTS.md` 為唯一真檔並移除 `CLAUDE.md`；Policy Check 改用 `SanHsien/paulsha-conventions`（上游 v1.0.15 加可設定的 canonical agent file），`dependency-freshness` 每月比對上游引擎版本。
 - Verification evidence 若附帶 `quality_summary`，現在會驗證 v1 schema、Full profile、完整 candidate SHA 綁定，以及非空且全為 boolean 的 gates；`verified` 不再接受 Quick、錯誤 commit 或失敗 gate 的摘要。
 - 「相關工具」交叉連結由四層改為五層：補上供應鏈層 `SkillSpector`（agent skill 在裝進來之前的掃描），這一層原本缺席，讓整條鏈從「已經裝好之後才開始管」開始講。旁註同時區分 `agent-governance-toolkit` 治理的是上線後自主運行的 agent，與這五層治理的 coding agent 是不同範圍。

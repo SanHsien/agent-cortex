@@ -1,15 +1,15 @@
-<!-- managed-by: hamanpaul/paulsha-conventions@v1.0.15 -->
+<!-- managed-by: hamanpaul/paulsha-conventions@v1.0.17 -->
 <!-- 此為 canonical 真檔；GEMINI.md / .github/copilot-instructions.md 為指向本檔的 symlink，只維護本檔。不放 CLAUDE.md：Claude Code 在專案沒有 CLAUDE.md 時會讀 AGENTS.md -->
-policy_version: 1.0.15
+policy_version: 1.0.17
 
 # Agent Policy Checklist
 
-本 repo 受 hamanpaul project policy v1.0.15 管轄。
+本 repo 受 hamanpaul project policy v1.0.17 管轄。
 所有 agent 進入 session 時，必須依下列 checklist 行動。
 
 ## 本 repo 的 profile
 - policy_profile: `flat` （見 `.project-policy.yml`）
-- policy_version: `1.0.15`
+- policy_version: `1.0.17`
 
 ## 本 repo 定位
 - `paulsha-cortex` 是治理平面拆包：persona 契約、coordinator 派工、control 檔案契約。
@@ -119,7 +119,7 @@ policy_version: 1.0.15
 - **`.project-policy.yml` 新增**：`agent_files.mode`（`copy` / `symlink`）、`conventions_engine.repo`（`owner/repo`，空字串為 NA sentinel）。
 - **Exemption 白名單新增**：`policy-exempt:engine-pin`（R-23）。
 - **禁止新增**：把 agent symlink 還原成獨立複本（`agent_files.mode: symlink` 下 R-14 會 FAIL）。
-- **本 repo 覆寫（SanHsien fork 引擎）**：本 repo 改用 `SanHsien/paulsha-conventions`（上游 v1.0.15 加上 `agent_files.canonical`／`agent_files.required` 設定），canonical 改為 `AGENTS.md`、`CLAUDE.md` 不列入必要檔；上游引擎是否有新版由 `dependency-freshness` workflow 每月比對。
+- **本 repo 覆寫（SanHsien fork 引擎）**：本 repo 改用 `SanHsien/paulsha-conventions`（上游 v1.0.17 加上 `agent_files.canonical`／`agent_files.required` 設定），canonical 改為 `AGENTS.md`、`CLAUDE.md` 不列入必要檔；上游引擎是否有新版由 `dependency-freshness` workflow 每月比對。
 
 ## v1.0.7 新增規則（MOC 對齊）
 > 本段於 policy 1.0.7 隨 R-24 新增。
