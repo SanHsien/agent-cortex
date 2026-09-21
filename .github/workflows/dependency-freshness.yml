@@ -54,9 +54,9 @@ jobs:
         id: engine
         env:
           GH_TOKEN: ${{ github.token }}
-          # 本 repo 用 SanHsien/paulsha-conventions（上游 v1.0.15 + agent_files 設定）。
+          # 本 repo 用 SanHsien/paulsha-conventions（上游 v1.0.17 + agent_files 設定）。
           # 上游 VERSION 超過這個基準時，要把 fork 分支 rebase 到新版並重新 pin。
-          ENGINE_BASE: "1.0.15"
+          ENGINE_BASE: "1.0.17"
           UPSTREAM_ENGINE: hamanpaul/paulsha-conventions
         run: |
           upstream="$(gh api "repos/${UPSTREAM_ENGINE}/contents/VERSION" --jq .content | base64 -d | tr -d '[:space:]')"
