@@ -13,7 +13,7 @@
 
 - `pyproject.toml` 維持 `dependencies = []`，fresh install 可直接 `pip install .` 並執行 `cortex --help`
 - `paulsha_hippo` runtime 依賴已清零；legacy deck import 只剩 `persona/loader.py`
-- `README.md`、`CLAUDE.md`、systemd installer、runtime scripts、CI workflows 均已對齊 bootstrap 目標
+- `README.md`、`AGENTS.md`（當時為 CLAUDE.md）、systemd installer、runtime scripts、CI workflows 均已對齊 bootstrap 目標
 - `tier: shareable` 去識別化掃描乾淨；policy 1.0.12 本機實跑為綠
 
 ### 第一輪發現與處置
