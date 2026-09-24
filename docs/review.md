@@ -4,7 +4,7 @@
 
 ## 範圍
 
-- Plan：`2026-07-07-cortex-repo-bootstrap-and-migration.md`
+- Plan：`2026-07-07-cortex-repo-bootstrap-and-migration.md` <!-- doc-drift-ignore -->
 - 範圍：Task 1–10 的 bootstrap 實作與 Task 10 最終收尾
 
 ## 審查結論
@@ -12,18 +12,18 @@
 ### Strengths
 
 - `pyproject.toml` 維持 `dependencies = []`，fresh install 可直接 `pip install .` 並執行 `cortex --help`
-- `paulsha_hippo` runtime 依賴已清零；legacy deck import 只剩 `persona/loader.py`
+- `paulsha_hippo` runtime 依賴已清零；legacy deck import 只剩 `paulsha_cortex/persona/loader.py`
 - `README.md`、`AGENTS.md`（當時為 CLAUDE.md）、systemd installer、runtime scripts、CI workflows 均已對齊 bootstrap 目標
 - `tier: shareable` 去識別化掃描乾淨；policy 1.0.12 本機實跑為綠
 
 ### 第一輪發現與處置
 
-1. `coordinator_telegram_notifier.py` 仍呼叫不存在的 `paths.home_root()` / `paths.max_root()`，且硬編外部 coordinator 腳本路徑  
+1. `paulsha_cortex/scripts/coordinator_telegram_notifier.py` 仍呼叫不存在的 `paths.home_root()` / `paths.max_root()`，且硬編外部 coordinator 腳本路徑  
    → 已改為直接讀 `jobs.json`，並以 `PSC_MAX_ROOT` / `Path.home()` 推導 token 路徑；新增 `tests/test_coordinator_telegram_notifier.py`
 2. README / CLAUDE 仍含 legacy 主 repo literal  
    → 已清到只剩 `paulsha_cortex/persona/loader.py` 的 deck lazy import
 3. fresh install 仍會因 `import yaml` 失敗  
-   → 已新增 `paulsha_cortex/_yaml.py`，`loader.py` / `autonomy.py` 改走零依賴 parser；新增 `tests/test_zero_dependency_runtime.py`
+   → 已新增 `paulsha_cortex/_yaml.py`，`paulsha_cortex/persona/loader.py` / `paulsha_cortex/coordinator/autonomy.py` 改走零依賴 parser；新增 `tests/test_zero_dependency_runtime.py`
 
 ### 第二輪發現與處置
 

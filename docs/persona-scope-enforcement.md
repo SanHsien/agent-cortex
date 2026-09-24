@@ -29,7 +29,7 @@ work_item: persona-enforce-required-check
 是 fail-safe 的：缺檔、壞 YAML、缺 key、非法值一律退回 `shadow`——最保守，永不
 因設定損毀而誤翻 `enforce`。
 
-`personas.yaml` 每個角色除 `write_paths`／`allowed_tools` 等 scope 欄位外，
+`paulsha_cortex/persona/personas.yaml` 每個角色除 `write_paths`／`allowed_tools` 等 scope 欄位外，
 可另宣告 `completion_obligations`（字串清單，預設空，非破壞性擴充）：這是
 「派工前把完成義務講清楚」的事前宣告，會被 `render.render_contract_prompt`
 注入 dispatch prompt（見 `paulsha_cortex/persona/render.py`），與
@@ -59,7 +59,7 @@ python -m paulsha_cortex.persona.replay --limit 30 --ref main
    逐 PR 明細），`false_positives == 0` 時 `exit 0`。
 
 此回放納入 `tests/test_persona_scope_enforcement.py::HistoricalReplayTests`，
-可重跑；日後修改 scope 定義（`personas.yaml` 的 `write_paths`）時，重跑同一
+可重跑；日後修改 scope 定義（`paulsha_cortex/persona/personas.yaml` 的 `write_paths`）時，重跑同一
 指令即可立即看出對歷史合併紀錄的影響面。
 
 **角色假設**：回放固定假設歷史 PR 皆以 `builder` 角色合併，因為 coordinator
@@ -71,13 +71,13 @@ python -m paulsha_cortex.persona.replay --limit 30 --ref main
 直接產出獨立合併 PR，須擴充回放以涵蓋對應角色歸戶，而不是持續假設
 `builder`。
 
-**若回放出現誤殺**：只能修正 `personas.yaml` 的 scope 定義本身（或修正回放
+**若回放出現誤殺**：只能修正 `paulsha_cortex/persona/personas.yaml` 的 scope 定義本身（或修正回放
 的角色歸戶邏輯），絕不可放寬 `PersonaGuardrail` 的判定強度或擴大豁免範圍來
 讓回放通過——那會讓「零誤殺」變成自我實現的空話（D2）。
 
 ## 違規訊息格式（R2 / D3）
 
-`persona-scope.yml` 的 stdout 為單行 JSON verdict，違規時（`ok: false`）包含
+`.github/workflows/persona-scope.yml` 的 stdout 為單行 JSON verdict，違規時（`ok: false`）包含
 可定位訊息：
 
 ```json

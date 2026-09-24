@@ -98,9 +98,9 @@ cortex doctor --probe-live --repo owner/repo --json
 
 #### 自訂 combo（instance-local override）
 
-`paulsha_cortex/deck/schema.py` 的 `resolve_combo_path()`／`iter_combo_files()`（`deck/cli.py`、`work_bridge.py`、`porcelain/init_sample.py` 皆已改走這兩個入口）會先查 `$PSC_AGENTS_ROOT/config/combos/<id>.yaml`，找不到才 fallback 到套件內建 `paulsha_cortex/deck/data/combos/`。同 id 時 instance-local 優先於套件內建，且 reinstall／升級套件不會蓋掉這份自訂檔——把自訂 combo YAML 放進 `$PSC_AGENTS_ROOT/config/combos/` 即可長期覆寫或新增 combo，不需要 fork 套件內建資料。兩個目錄都找不到指定 id 時 fail-closed，錯誤訊息會列出實際搜尋過的目錄清單。
+`paulsha_cortex/deck/schema.py` 的 `resolve_combo_path()`／`iter_combo_files()`（`paulsha_cortex/deck/cli.py`、`paulsha_cortex/coordinator/work_bridge.py`、`paulsha_cortex/porcelain/init_sample.py` 皆已改走這兩個入口）會先查 `$PSC_AGENTS_ROOT/config/combos/<id>.yaml`，找不到才 fallback 到套件內建 `paulsha_cortex/deck/data/combos/`。同 id 時 instance-local 優先於套件內建，且 reinstall／升級套件不會蓋掉這份自訂檔——把自訂 combo YAML 放進 `$PSC_AGENTS_ROOT/config/combos/` 即可長期覆寫或新增 combo，不需要 fork 套件內建資料。兩個目錄都找不到指定 id 時 fail-closed，錯誤訊息會列出實際搜尋過的目錄清單。
 
-`small-fix` 是套件內建的輕量 combo 參考實作（`workflow-claim → brainstorming → writing-plans-light → subagent-build → verification → code-review → policy-commit`，7 張卡、2 條核心 gate_spine），刻意用 `writing-plans-light`（只吃 `docs/superpowers/specs/*<task-slug>*-design.md`，不依賴 `openspec/changes/<change>/proposal.md`）取代 `writing-plans`，打斷小任務不需要的 openspec 全鏈。`small-fix` 只能經 `--combo small-fix` explicit override 使用，不在 `task-types.yaml` 的自動選牌映射中（`combo.task_type` 填 `small-fix`，不是 `fix`——避免和 `fix-standard` 的自動選牌搶同一個 `fix` task type）。
+`small-fix` 是套件內建的輕量 combo 參考實作（`workflow-claim → brainstorming → writing-plans-light → subagent-build → verification → code-review → policy-commit`，7 張卡、2 條核心 gate_spine），刻意用 `writing-plans-light`（只吃 `docs/superpowers/specs/*<task-slug>*-design.md`，不依賴 `openspec/changes/<change>/proposal.md`）取代 `writing-plans`，打斷小任務不需要的 openspec 全鏈。`small-fix` 只能經 `--combo small-fix` explicit override 使用，不在 `paulsha_cortex/deck/data/task-types.yaml` 的自動選牌映射中（`combo.task_type` 填 `small-fix`，不是 `fix`——避免和 `fix-standard` 的自動選牌搶同一個 `fix` task type）。
 ### Intake（`link` + `start` 合成，#203）
 
 `cortex work intake <work_id> --repo <owner/repo>` 是「拿到一個 issue/task 就進件」的單一入口，取代已停用的低階 `dispatch`。它等價於「（必要時）`link` 後接 `start`」，但收斂成一次呼叫：
@@ -126,7 +126,7 @@ Telegram 等 bot 宿主若要提供「貼一段文字/issue 就進件」的入�
 的手動判斷——`hamanpaul/paulsha-cortex#326`–`#330` 是本專案自己實際跑過一次
 的完整記錄，橫跨 5 個 PR、近 9 小時。`docs/adr/0002-work-identity-migration.md`
 定了收斂成單一 `cortex work migrate` 動詞的設計（單一 atomic override
-transaction、凍結 authority 做 abandon CAS、不放寬 `claim.py` 既有的碰撞
+transaction、凍結 authority 做 abandon CAS、不放寬 `paulsha_cortex/coordinator/claim.py` 既有的碰撞
 不變量），供後續 code 票直接實作；本文件的 `## CLI` 範例區塊會在該動詞落地
 後同步補上。
 
