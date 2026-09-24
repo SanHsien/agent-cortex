@@ -32,7 +32,7 @@
 
 ## 5. 驗證仍由 repo 契約決定
 
-- `tools/dev_check.ps1`／`.sh` 是一致入口，不取代 `AGENTS.md` 的 changelog、PR-context policy check 與 Candidate evidence 規則。
+- `tools/dev_check.ps1`／`tools/dev_check.sh` 是一致入口，不取代 `AGENTS.md` 的 changelog、PR-context policy check 與 Candidate evidence 規則。
 - 每次只接受同一 Candidate 的一次權威 full gate；失敗後只重跑受影響的 focused test，再做一次完整收尾。
 - WSL `/mnt/c` 的慢速不是測試失敗；但 timeout 或 skipped checks 必須如實記錄，不能包裝成通過。
 
@@ -44,14 +44,14 @@
 
 ## 2026-08-29：上游檢查補上 PR 與 issue 兩個面向
 
-**決定**：`check_upstream_updates.py` 補上以 `--state all` 收集上游 PR／issue 的邏輯，
-`upstream-check.yml` 補 `GH_TOKEN: ${{ github.token }}`，新增 `tests/test_upstream_updates.py`。
+**決定**：`tools/check_upstream_updates.py` 補上以 `--state all` 收集上游 PR／issue 的邏輯，
+`.github/workflows/upstream-check.yml` 補 `GH_TOKEN: ${{ github.token }}`，新增 `tests/test_upstream_updates.py`。
 Baseline 既有的水位不動。
 
-**理由**：`docs/UPSTREAM.md` 早就寫著「四個面向都要看」，`upstream_baseline.json` 也記著
+**理由**：`docs/UPSTREAM.md` 早就寫著「四個面向都要看」，`tools/upstream_baseline.json` 也記著
 `reviewed_pr_through` 與 `reviewed_issue_through`——但**沒有任何程式讀那兩個欄位**，檢查器只比對
 commit 水位。那兩個面向不是「查過沒發現」，是根本沒查，而每週的排程報告長得跟查過一樣綠。
-這是艦隊層級的問題：24 個 fork 裡 21 個都這樣（`SanHsien/repo-fleet-ops` 的 `docs/INCIDENTS.md`
+這是艦隊層級的問題：24 個 fork 裡 21 個都這樣（`SanHsien/repo-fleet-ops` 的 `docs/INCIDENTS.md` <!-- doc-drift-ignore -->
 第十條）。參考實作是 `SanHsien/harness-guard`。
 
 三個性質，缺一不可：

@@ -1,0 +1,14 @@
+# policy R-22（doc_reference）豁免清單。格式見引擎 policy_check/doc_drift/exempt.py：
+#   `symbol:<token>` 讓該 token 在所有文件都不報；其他行是文件路徑 glob，整份文件不檢查。
+#
+# ADR 是當時的決策紀錄，大量用「檔名:行號」指當下程式碼，不隨程式碼改寫。
+docs/adr/*
+#
+# 執行時才產生、或位於使用者 ~/.agents 等 repo 外位置的檔名，repo 裡本來就不會有。
+symbol:intent.md
+symbol:jobs.json
+symbol:todo.md
+symbol:work-items.snapshot.json
+symbol:project-cortex.yaml
+symbol:project-hippo.yaml
+symbol:paulshaclaw.yaml

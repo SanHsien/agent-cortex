@@ -9,6 +9,8 @@
 
 ### Changed
 
+- Tests 的 pytest 改為無條件 gate：拿掉 template 留下的「偵測有無測試才跑」條件（policy R-19 標為可被靜默跳過的高風險樣式）；`tests/` 若消失或收不到測試，job 直接失敗而不是回報 success。Persona Scope 的安裝步驟移除用不到的 `pytest`，R-19 不再把它誤認為測試 gate（上游下一版會轉 FAIL）。
+- 文件引用清掉 R-22 的 55 筆懸空引用：repo 內有的檔案改寫成完整路徑；執行時才產生或在 repo 外的檔名列進新的 `.doc-drift-allow`；ADR 屬當時的決策紀錄（大量「檔名:行號」），整份豁免。
 - Policy 引擎升到上游 v1.0.17（SanHsien fork，保留可設定 canonical agent file 補丁），`policy_version` 同步為 1.0.17。
 - Agent 慣例檔改以 `AGENTS.md` 為唯一真檔並移除 `CLAUDE.md`；Policy Check 改用 `SanHsien/paulsha-conventions`（上游 v1.0.15 加可設定的 canonical agent file），`dependency-freshness` 每月比對上游引擎版本。
 - Verification evidence 若附帶 `quality_summary`，現在會驗證 v1 schema、Full profile、完整 candidate SHA 綁定，以及非空且全為 boolean 的 gates；`verified` 不再接受 Quick、錯誤 commit 或失敗 gate 的摘要。

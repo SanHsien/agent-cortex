@@ -200,7 +200,7 @@ Deck compile 現在接受顯式 `--repo owner/repo`，並把該 work item 已確
 ### `hamanpaul/paulsha-cortex#475`，fork 已處理，upstream open
 
 採用 issue 揭露的模型身分誤綁風險，並選擇 instance-scoped operator authority，
-不在 repo-controlled `model-identities.yaml` 增加任意 executable 欄位：
+不在 repo-controlled `paulsha_cortex/coordinator/data/model-identities.yaml` 增加任意 executable 欄位：
 
 - `PSC_CLAUDE_EXECUTABLE=/absolute/path/compatible-launcher` 可綁定 Claude
   Code-compatible launcher。只接受絕對、regular、非 symlink 的可執行檔；明確
