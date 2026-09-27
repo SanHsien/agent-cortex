@@ -1,0 +1,1 @@
+- Verification evidence 的 `quality_summary` 現在必須是 Full 證據、綁定同一 candidate SHA，且所有 gate 都是明確 boolean；不再接受 Quick 或錯誤 commit 的摘要。

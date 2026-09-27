@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.venv-wsl/
+.coverage
+htmlcov/
+build/
+*.egg-info/
+
+# dogfood runtime 殘留（daemon cwd=repo root 時產生）
+/runtime/
+/.dogfood-specs/
+dist/
+
+# 上游檢查器產生的報告（workflow 讀它寫進 job summary），不進版控
+upstream-review-report.md

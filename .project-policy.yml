@@ -1,0 +1,36 @@
+policy_profile: flat
+policy_version: 1.0.17
+tier: shareable
+code_paths:
+  - ".project-policy.yml"
+  - "VERSION"
+  - "pyproject.toml"
+  - "paulsha_cortex/**"
+  - "tests/**"
+  - "**/*.md"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - ".github/**"
+agent_files:
+  mode: symlink
+  # SanHsien fork 引擎設定：AGENTS.md 為唯一真檔，不放 CLAUDE.md。
+  canonical: AGENTS.md
+  required:
+    - AGENTS.md
+    - GEMINI.md
+    - .github/copilot-instructions.md
+conventions_engine:
+  repo: SanHsien/paulsha-conventions
+preflight:
+  steps:
+    - name: openspec
+      kind: validation
+      # main 仍有多個未完成 active changes；本 migration 只驗 canonical specs，
+      # 不以無關 WIP change 的缺 delta 阻擋 manifest rollout。
+      argv: ["openspec", "validate", "--specs"]
+      when_path_exists: "openspec"
+      timeout_seconds: 300
+    - name: tests
+      kind: tests
+      argv: ["python3", "-m", "pytest", "tests/", "-q"]
+      timeout_seconds: 1800
