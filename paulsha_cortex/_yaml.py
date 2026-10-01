@@ -7,6 +7,43 @@ class YAMLError(ValueError):
     """Subset YAML parser error for zero-dependency runtime paths."""
 
 
+def _tokenize_inline_list(inner: str) -> list[str]:
+    parts: list[str] = []
+    token: list[str] = []
+    quote: str | None = None
+    index = 0
+
+    while index < len(inner):
+        char = inner[index]
+        if quote is not None:
+            token.append(char)
+            if char == "\\":
+                index += 1
+                if index < len(inner):
+                    token.append(inner[index])
+            elif char == quote:
+                quote = None
+        elif char in {'"', "'"} and not "".join(token).strip():
+            quote = char
+            token.append(char)
+        elif char == ",":
+            parts.append("".join(token).strip())
+            token.clear()
+        else:
+            token.append(char)
+        index += 1
+
+    if quote is not None:
+        raise YAMLError(f"malformed inline list: [{inner}]")
+
+    parts.append("".join(token).strip())
+    if parts[-1] == "":
+        parts.pop()
+    if not parts or any(not part for part in parts):
+        raise YAMLError(f"malformed inline list: [{inner}]")
+    return parts
+
+
 def _parse_scalar(raw: str):
     if raw in {"null", "Null", "NULL", "~"}:
         return None
@@ -20,7 +57,7 @@ def _parse_scalar(raw: str):
         inner = raw[1:-1].strip()
         if not inner:
             return []
-        return [_parse_scalar(part.strip()) for part in inner.split(",")]
+        return [_parse_scalar(part) for part in _tokenize_inline_list(inner)]
     if (raw.startswith('"') and raw.endswith('"')) or (raw.startswith("'") and raw.endswith("'")):
         try:
             return ast.literal_eval(raw)
@@ -77,6 +114,17 @@ def safe_load(text: str):
             if value_text:
                 result[key] = _parse_scalar(value_text)
                 i += 1
+                continue
+            if (
+                i + 1 < len(lines)
+                and lines[i + 1][1] == current_indent
+                and lines[i + 1][2].startswith("- ")
+            ):
+                # indentless block sequence（PyYAML safe_dump 預設輸出）：
+                # `key:` 之後、同縮排的 `- ` 序列屬於該 key。只在「空值 key
+                # 緊接同縮排 dash」時觸發，純擴大接受集，不改既有可解文件。
+                nested, i = parse_list(i + 1, current_indent)
+                result[key] = nested
                 continue
             if i + 1 >= len(lines) or lines[i + 1][1] <= current_indent:
                 result[key] = {}

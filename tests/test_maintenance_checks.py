@@ -199,7 +199,7 @@ def test_baseline_tracks_releases_because_this_fork_syncs_per_release() -> None:
     baseline = upstream.load_baseline()
 
     assert baseline["track"] == "release"
-    assert baseline["reviewed_release"] == "v0.1.8"
+    assert baseline["reviewed_release"] == "v0.1.11"
 
 
 def test_load_baseline_rejects_an_unknown_track_mode(tmp_path: Path) -> None:

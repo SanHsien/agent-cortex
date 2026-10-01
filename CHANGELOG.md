@@ -9,6 +9,7 @@
 
 ### Changed
 
+- 上游 v0.1.9／v0.1.10／v0.1.11（1189 個 commit）以 release 邊界審查並記入 `docs/UPSTREAM.md`：coordinator／monitor／porcelain 契約整批列為待採用，release／trust_root／qualification 不適用；baseline 推進到 v0.1.11（PR 水位 1250、issue 水位 1237）。
 - Tests 的 pytest 改為無條件 gate：拿掉 template 留下的「偵測有無測試才跑」條件（policy R-19 標為可被靜默跳過的高風險樣式）；`tests/` 若消失或收不到測試，job 直接失敗而不是回報 success。Persona Scope 的安裝步驟移除用不到的 `pytest`，R-19 不再把它誤認為測試 gate（上游下一版會轉 FAIL）。
 - 文件引用清掉 R-22 的 55 筆懸空引用：repo 內有的檔案改寫成完整路徑；執行時才產生或在 repo 外的檔名列進新的 `.doc-drift-allow`；ADR 屬當時的決策紀錄（大量「檔名:行號」），整份豁免。
 - Policy 引擎升到上游 v1.0.17（SanHsien fork，保留可設定 canonical agent file 補丁），`policy_version` 同步為 1.0.17。
@@ -21,6 +22,7 @@
 - 上游追蹤判準補上「不等 tag 的例外」：上游 `main` 上的修正若對照本 fork 程式碼確認缺陷仍在，即選擇性移植，不再整批等下一個 release tag。首次引用（`59a7a9b`）的對照證據、同批 202 個 commit 中不引用者的理由與觸發條件，逐項記在 `docs/UPSTREAM.md`，避免下次重作評估。
 
 ### Fixed
+- `_yaml.py` subset parser：inline list 的引號值與單引號跳脫、indentless sequence 不再解析失敗（取自上游 v0.1.11）。
 - repo root 解析 fail-closed：未宣告 `PSC_REPO_ROOT` 時不再退回 `Path.cwd()`，避免 daemon 把 git 動作打在 operator 的真實 checkout 上（取自上游 #612／#630）。
 
 ### Added

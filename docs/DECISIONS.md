@@ -122,3 +122,15 @@ install service 整檔取代共享設定、verifier 在唯讀 sandbox 跑不綠�
 
 僅檢視 coordinator/CI 入口三筆；其餘 401 commits 含 release/deployment/policy contract，故不採用、
 不推進 `dc8a968`。下一切片為 v0.1.9 tag 的 bounded diff，需通過 dev check 與 release qualification。
+
+## 2026-10-01：v0.1.8 → v0.1.11 release 審查
+
+**決定**：以 release 邊界與目錄分區審查 v0.1.9／v0.1.10／v0.1.11（1189 commit），baseline 推進到 v0.1.11
+（`989199f`），PR 水位 1250、issue 水位 1237。只採用 `_yaml.py` subset parser 修正；coordinator／monitor／
+porcelain 契約整批列為「待採用」，release／trust_root／qualification 判為不適用。
+
+**理由**：coordinator 一組檔案與本 fork 的 Windows 改動大量重疊且彼此相依，無法逐支挑選；整批併入需要
+獨立分支與完整測試套件，不是這一輪的範圍。推進 baseline 的意思是「這個 release 已被讀過並分類」，
+不是「已全部併入」。
+
+**觸發條件**：在獨立分支做完整 release sync，並以完整測試套件驗證。逐項判定見 [`UPSTREAM.md`](UPSTREAM.md) 同日條目。

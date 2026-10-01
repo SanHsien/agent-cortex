@@ -1,6 +1,6 @@
 # Upstream tracking
 
-最後檢查：2026-08-22（批次檢視；已審 release 仍為 v0.1.8＝`dc8a968`）
+最後檢查：2026-10-01（已審 release：v0.1.11＝`989199f`；上游 `main` 於 `504d836`）
 
 自 2026-08-22 起，`.github/workflows/upstream-check.yml` 每週一 11:00（Asia/Taipei）比對的是**上游的 release
 tag**，不是 `main`。`tools/upstream_baseline.json` 的 `track: "release"` 決定這個行為：檢查器問「上游有沒有發出
@@ -10,6 +10,67 @@ tag**，不是 `main`。`tools/upstream_baseline.json` 的 `track: "release"` �
 改追 release 的理由記在這裡，不是為了讓紅燈消失：本 fork 至今四次同步（v0.1.5、v0.1.6、v0.1.7、v0.1.8）
 全部錨定在上游的 tag，而上游 `main` 每天變動多次。追 `main` 會讓每週檢查永遠是紅的、而且列出的目標在讀到報告
 時就已經過期——一個永遠紅的檢查等於沒有檢查。審完把決策寫進本檔，再推進 baseline；先驗證，後推進。
+
+## 2026-10-01：v0.1.9／v0.1.10／v0.1.11 release 審查（baseline 推進到 v0.1.11）
+
+範圍：`v0.1.8`（`dc8a968`）→ `v0.1.11`（`989199f8d48301feb59a90075b7d5001c5a3f272`，2026-09-28），共
+1189 個 commit（343＋15＋831）、1225 個檔案、+341,302／−6,729 行。依 release 邊界與目錄分區判定，
+**不逐 commit 審**；`tests`、`changelog.d`、`docs`、`openspec`、`reports` 佔檔案數的大宗，且多為上游的
+規劃與進度產物。上游 `main`（`504d836`）在 v0.1.11 之後另有 235 個未發版 commit，維持
+`track: release` 的原則，等下一個 tag 再審。
+
+### 區域判定
+
+| Release | 區域（規模） | 判定與理由 |
+| --- | --- | --- |
+| v0.1.9（343 commit、522 檔、+152k） | coordinator（40 檔、+26k：manager、work_actions、registry、claim、outcome taxonomy、planning） | 待採用。與本 fork 68 個已存在的檔案重疊（manager／work_actions 各有上千行變動），屬 work-item／retry-card／診斷契約的連續重寫，無法安全挑選。 |
+| | monitor（GitHub 掃描節流、git-native reads、incremental issue sync） | 待採用。改動 `providers.py`／`work_api.py`，與本 fork 的 Windows loopback transport 重疊。 |
+| | `trust_root/`（12 檔、+22k）、installer | 不適用。本 fork 沒有 `trust_root`，Windows 原生、不走多 UID 系統部署。 |
+| | policy 1.0.15→1.0.17（`.project-policy.yml`、workflows） | 沿用本 fork 既有結果。fork 已自備 1.0.17 引擎（`SanHsien/paulsha-conventions`）。 |
+| | `qualification/`、`.github`（release 驗證流程） | 不適用。本 fork 不發 release artifact（無 LICENSE，見 DECISIONS §4）。 |
+| | `_yaml.py` subset parser | **採用**（見下）。 |
+| | docs／openspec／workstreams／changelog.d | 不適用。上游的規劃與進度紀錄。 |
+| v0.1.10（15 commit、51 檔、+11k） | trust_root RC rollback、final-head release gates（#798／#801／#804）、qualification driver | 不適用（同上：trust-root 與 release pipeline）。 |
+| v0.1.11（831 commit、852 檔、+180k） | coordinator（53 檔、+40k：quota admission、execution profile、backoff store、AGY builder、recovery 契約、delivery） | 待採用。與 v0.1.9 同一組檔案的後續重寫，只能整批併入。 |
+| | porcelain／CLI（model profile、status 決策投影、retry-card） | 待採用，隨 coordinator。 |
+| | monitor、deck、control（小幅） | 待採用，隨 coordinator。 |
+| | trust_root installer 修正、runtime／systemd probe、canary qualification | 不適用（Linux 系統部署與上游 release 驗證）。 |
+| | docs（221 檔）、`reports/review`、openspec、handoff | 不適用。 |
+| | release（`VERSION`、`#1117`、release-transaction） | 不適用；fork 版本號獨立。 |
+
+### 採用
+
+- `paulsha_cortex/_yaml.py` subset parser：inline list 的引號值與單引號跳脫（上游 `7d72dee3`、`8073d1d2`），
+  以及 `key:` 後同縮排 dash 的 indentless sequence（`ec914fe`，PyYAML `safe_dump` 預設輸出形狀）。
+  對照證據：fork 的 `_yaml.py` 與 v0.1.8 逐位元相同，缺陷仍在；變更只擴大接受集，且自成一檔。
+  取自 v0.1.11 的整檔，連同 `tests/test_yaml_subset.py`、`tests/test_yaml_inline_list.py`。
+- 已在 fork 內的等價修正：`#487`（OAuth word boundary，見 2026-08-12 ledger），不重複引用。
+
+### 待採用與觸發條件
+
+- 觸發條件：**在獨立分支上做完整 release sync，並以完整測試套件（`tools\dev_check.ps1` 全綠）驗證**；
+  範圍為 coordinator／monitor／porcelain／CLI／control 這一組互相依賴的契約，以 v0.1.11 為整批單位。
+  在那之前，個別缺陷仍用 2026-08-23 的判準逐支移植（先確認缺陷在 fork 仍在、再看相依）。
+- release／deployment／trust_root／qualification：只有本線改走 Linux 系統部署或開始發布 artifact 時才重評。
+
+### PR 與 issue（`--state all`）
+
+PR `#817`–`#1250`（222 筆，0 open）：每個 PR 皆已入 `main` 或被取代。
+
+- 200 merged（含 2026-10-01 查核當日新增的 `#1240`–`#1250`：十筆 qualification canary 修正屬不適用，`#1249` monitor work show 隨 coordinator 一併待採用）：經 release 軸抵達（v0.1.11 之前的隨 tag；之後的隨下一個 tag），內容多為 refine 規劃 docs、
+  workflow 自動交付與 coordinator／quota 修正。
+- 22 closed 未合併，全數查過關閉留言，皆為被取代而非拒收：`#889`→`#893`（分支改名）、`#891`→`#886`
+  （同一測試的較佳修法）、`#907`→重新進件（`#909`）、其餘 19 筆規劃 docs 被 operator 整合 PR
+  （`#1088`–`#1092`）取代。
+
+Issue `#816`–`#1237`（212 筆）：152 closed／completed，46 closed／not planned（上游把過細子票併入上層票），
+14 open（`#829`、`#835`–`#845` 的 refine 系列、`#857`、`#868`、`#1122`）。open 項目是上游進行中的 work item
+與 trust-root 部署票，follow-upstream，不單獨處理。
+
+### 水位
+
+- commit：`989199f`（v0.1.11）；PR：`1250`；issue：`1237`；日期 2026-10-01。
+- 驗證：`tools\dev_check.ps1` 全綠後才推進；`tools/check_upstream_updates.py` 結果見 workflow。
 
 ## 2026-08-22 批次檢視：v0.1.8 之後的上游開發中變更
 
