@@ -230,3 +230,7 @@ CI 同時涵蓋 tests、persona scope、policy check、CodeQL，以及 dependenc
 Upstream：[`hamanpaul/paulsha-cortex`](https://github.com/hamanpaul/paulsha-cortex)。
 
 本 repository 是維護型 Windows-first fork。上游治理模型與大量核心 runtime 仍屬 upstream 工作；本 fork 的公開價值在於 Windows 原生化、跨平台可靠性修補、Windows regression coverage，以及選擇性 upstream 維護，而不是重新宣稱 upstream 設計為自身原創。
+
+## 多 Agent 流水線
+
+本 repo 是 [agent-relay](https://github.com/SanHsien/agent-relay) 多 Agent 派工與驗收流水線的一環（角色：Windows 原生控制平面、開新 Session）。與 agent-relay 的整合規劃中（Phase 2）。協定規格與所有相關 repo 的總目錄見 agent-relay。
