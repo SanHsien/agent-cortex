@@ -9,7 +9,7 @@
 - Independent review evidence：
 
 - [ ] `pwsh -File tools/dev_check.ps1`
-- [ ] 已以本 PR 的 title/body/labels/base/head 執行 `CLAUDE.md` 指定的 policy check
+- [ ] 已以本 PR 的 title/body/labels/base/head 執行 `AGENTS.md`「完成任務（claim done）前」指定的 policy check
 - [ ] Verification 與 Review 都綁定上方同一 Candidate
 
 ## 專案契約

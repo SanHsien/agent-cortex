@@ -26,7 +26,7 @@ pwsh -File tools/dev_check.ps1 -Quick
 1. 從 `main` 建立 `feature/<slug>`，一個 PR 聚焦一個主題。
 2. 行為變更先補 regression test。
 3. 新增並 commit `changelog.d/<slug>.md`，同步更新 `CHANGELOG.md` `[Unreleased]`。
-4. 執行完整 dev check，以及 `CLAUDE.md` 指定的 PR-context policy check。
+4. 執行完整 dev check，以及 `AGENTS.md`「完成任務（claim done）前」指定的 PR-context policy check。
 5. 說明 Candidate SHA、實際執行的測試、review evidence、平台限制與未完成風險。
 
 不要以 agent 自報、process exit 0、PR 已建立或過期 Candidate 的 review 取代完成證據。

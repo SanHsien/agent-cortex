@@ -9,6 +9,7 @@
 
 ### Changed
 
+- `CONTRIBUTING.md` 與 PR template 不再指向已刪除的 `CLAUDE.md`，改指 `AGENTS.md`「完成任務（claim done）前」的 PR-context policy check。
 - 刪除 `GEMINI.md`，內容併入 `AGENTS.md`（Antigravity 原生讀取 `AGENTS.md`）；`.project-policy.yml` 的 `agent_files.required` 移除 `GEMINI.md`。
 - 上游 v0.1.9／v0.1.10／v0.1.11（1189 個 commit）以 release 邊界審查並記入 `docs/UPSTREAM.md`：coordinator／monitor／porcelain 契約整批列為待採用，release／trust_root／qualification 不適用；baseline 推進到 v0.1.11（PR 水位 1250、issue 水位 1237）。
 - Tests 的 pytest 改為無條件 gate：拿掉 template 留下的「偵測有無測試才跑」條件（policy R-19 標為可被靜默跳過的高風險樣式）；`tests/` 若消失或收不到測試，job 直接失敗而不是回報 success。Persona Scope 的安裝步驟移除用不到的 `pytest`，R-19 不再把它誤認為測試 gate（上游下一版會轉 FAIL）。
