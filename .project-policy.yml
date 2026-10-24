@@ -17,7 +17,6 @@ agent_files:
   canonical: AGENTS.md
   required:
     - AGENTS.md
-    - GEMINI.md
     - .github/copilot-instructions.md
 conventions_engine:
   repo: SanHsien/paulsha-conventions

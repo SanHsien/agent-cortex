@@ -1,5 +1,5 @@
 <!-- managed-by: hamanpaul/paulsha-conventions@v1.0.18 -->
-<!-- 此為 canonical 真檔；GEMINI.md / .github/copilot-instructions.md 為指向本檔的 symlink，只維護本檔。不放 CLAUDE.md：Claude Code 在專案沒有 CLAUDE.md 時會讀 AGENTS.md -->
+<!-- 此為 canonical 真檔；.github/copilot-instructions.md 為指向本檔的 symlink，只維護本檔。不放 CLAUDE.md、GEMINI.md：Claude Code 在專案沒有 CLAUDE.md 時會讀 AGENTS.md，Antigravity 原生讀取 AGENTS.md -->
 policy_version: 1.0.18
 
 # Agent Policy Checklist
@@ -65,7 +65,7 @@ policy_version: 1.0.18
 - 直接 commit 到 `main`
 - 建立不符合命名規則的分支（必須 `feature/<slug>` 或 `wt/<feature>/<subtask>`）
 - 發明新 `policy-exempt:*` label（**只能用 policy 列舉的白名單**）
-- 把 agent symlink（AGENTS.md / GEMINI.md / .github/copilot-instructions.md）還原成獨立複本（`agent_files.mode: symlink` 下 R-14 會 FAIL）
+- 把 agent symlink（AGENTS.md / .github/copilot-instructions.md）還原成獨立複本（`agent_files.mode: symlink` 下 R-14 會 FAIL）
 
 ## Exemption Labels 白名單
 僅允許使用以下 labels 豁免對應規則（其他一律視同未豁免）：
@@ -130,7 +130,7 @@ policy_version: 1.0.18
 
 ## v1.0.12 新增規則（隨 paulsha-conventions 1.0.8→1.0.12 升級）
 
-- **R-14（無豁免）**：本 repo 採 symlink 模式；`GEMINI.md`、`.github/copilot-instructions.md` 必須持續指向 `AGENTS.md`（`agent_files.canonical: AGENTS.md`）。本 repo 不放 `CLAUDE.md`；若有人新增 `CLAUDE.md` 複本，R-14 會 FAIL。
+- **R-14（無豁免）**：本 repo 採 symlink 模式；`.github/copilot-instructions.md` 必須持續指向 `AGENTS.md`（`agent_files.canonical: AGENTS.md`）。本 repo 不放 `CLAUDE.md`、`GEMINI.md`；若有人新增這兩檔的複本，R-14 會 FAIL。
 - **R-21（tier: shareable 生效）**：全 repo 不得含個人絕對路徑、使用者名或雇主／廠商識別；一律改用 `$HOME`、env、相對路徑或測試暫存目錄。
 - **R-22（doc-reference，diff-aware）**：本次 PR 新造成的 README / docs 懸空引用為 FAIL；陳年問題屬 WARN。
 - **R-23（引擎 pin attestation）**：`policy-check.yml` 的 reusable workflow pin、`policy_engine_ref`、`.project-policy.yml` 的 `policy_version` 必須同步對齊。
