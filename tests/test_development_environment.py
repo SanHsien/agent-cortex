@@ -91,3 +91,9 @@ def test_readme_links_fork_development_documents() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     for path in ("docs/DEVELOPMENT.md", "docs/FORK.md", "docs/DECISIONS.md"):
         assert f"]({path})" in readme
+
+
+def test_dev_check_sh_validates_the_built_distributions_like_the_powershell_twin() -> None:
+    dev_check = (ROOT / "tools" / "dev_check.sh").read_text(encoding="utf-8")
+
+    assert "-m twine check --strict" in dev_check

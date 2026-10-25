@@ -43,3 +43,4 @@ fi
 dist_root="$(mktemp -d)"
 trap 'rm -rf "$dist_root"' EXIT
 "$venv_root/bin/python" -m build --outdir "$dist_root"
+"$venv_root/bin/python" -m twine check --strict "$dist_root"/*
