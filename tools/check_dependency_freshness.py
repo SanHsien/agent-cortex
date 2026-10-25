@@ -278,7 +278,7 @@ def main() -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Return non-zero when a declared floor has aged.",
+        help="Return non-zero when a declared floor has aged and no hold or live deferral covers it.",
     )
     args = parser.parse_args()
 
@@ -298,7 +298,7 @@ def main() -> int:
         write_github_output(rows, output_path)
     if error:
         return 2
-    if args.strict and any(bool(row["outdated"]) or bool(row["check_failed"]) for row in rows):
+    if args.strict and any(needs_review(row) or bool(row["check_failed"]) for row in rows):
         return 1
     return 0
 

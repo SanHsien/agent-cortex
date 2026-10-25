@@ -345,3 +345,42 @@ def test_a_deferral_expires_once_pypi_moves_past_the_reviewed_release() -> None:
     assert next_release  # 一往前推：延後失效，報告重新問
     assert deferrals["pytest"][1] == "等 Windows gate"
     assert package["hold"] == ""
+
+
+def _aged_row(**overrides) -> dict:
+    row = {
+        "name": "pkg",
+        "group": "runtime",
+        "requirement": "pkg>=1",
+        "minimum": "1",
+        "latest": "2.0",
+        "outdated": True,
+        "check_failed": False,
+        "hold": "",
+        "deferred_reason": "",
+    }
+    row.update(overrides)
+    return row
+
+
+def _run_freshness_main(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, rows: list[dict], *args: str) -> int:
+    monkeypatch.setattr(freshness, "load_direct_dependencies", lambda: [])
+    monkeypatch.setattr(freshness, "collect_status", lambda packages: rows)
+    monkeypatch.setattr(
+        sys, "argv", ["check_dependency_freshness.py", "--output", str(tmp_path / "r.md"), *args]
+    )
+    return freshness.main()
+
+
+def test_strict_ignores_floors_covered_by_a_hold_or_a_live_deferral(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    covered = [_aged_row(hold="政策"), _aged_row(name="other", deferred_reason="已評估")]
+    assert _run_freshness_main(monkeypatch, tmp_path, covered, "--strict") == 0
+
+
+def test_strict_still_fails_on_an_uncovered_aged_floor(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    assert _run_freshness_main(monkeypatch, tmp_path, [_aged_row()], "--strict") == 1
+

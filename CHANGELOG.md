@@ -7,6 +7,10 @@
 
 ## [Unreleased]
 
+### Fixed
+- `tools/dev_check.sh` 補上 `twine check --strict`，與 `dev_check.ps1` 對等；先前 Linux 完整驗證不檢查發行包中繼資料。
+- `check_dependency_freshness.py --strict` 不再把已有 `# freshness-hold:` 或未過期延後的過期下限當成失敗，與報告狀態和 `needs_attention` 一致。
+
 ### Changed
 - 上游 v0.1.12／v0.1.13／v0.1.14（481 個 commit）以 release 邊界審查並記入 `docs/UPSTREAM.md`：trust_root、qualification、release 流程不適用，coordinator／monitor／porcelain 契約維持整批待採用；`#1319` 列為觀察項；baseline 推進到 v0.1.14（`4572f19`），PR／issue 水位 1378。
 
