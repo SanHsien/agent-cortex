@@ -1,6 +1,6 @@
 # Upstream tracking
 
-最後檢查：2026-10-01（已審 release：v0.1.11＝`989199f`；上游 `main` 於 `504d836`）
+最後檢查：2026-10-25（已審 release：v0.1.14＝`4572f19`；上游 `main` 即 `4572f19`）
 
 自 2026-08-22 起，`.github/workflows/upstream-check.yml` 每週一 11:00（Asia/Taipei）比對的是**上游的 release
 tag**，不是 `main`。`tools/upstream_baseline.json` 的 `track: "release"` 決定這個行為：檢查器問「上游有沒有發出
@@ -10,6 +10,53 @@ tag**，不是 `main`。`tools/upstream_baseline.json` 的 `track: "release"` �
 改追 release 的理由記在這裡，不是為了讓紅燈消失：本 fork 至今四次同步（v0.1.5、v0.1.6、v0.1.7、v0.1.8）
 全部錨定在上游的 tag，而上游 `main` 每天變動多次。追 `main` 會讓每週檢查永遠是紅的、而且列出的目標在讀到報告
 時就已經過期——一個永遠紅的檢查等於沒有檢查。審完把決策寫進本檔，再推進 baseline；先驗證，後推進。
+
+## 2026-10-25：v0.1.12／v0.1.13／v0.1.14 release 審查（baseline 推進到 v0.1.14）
+
+範圍：`v0.1.11`（`989199f`）→ `v0.1.14`（`4572f19ddad68e09e8ca23f64c7cb38909c28d66`，2026-10-09，亦是上游 `main` tip），
+共 481 個 commit（v0.1.12 275、v0.1.13 44、v0.1.14 162）、482 個檔案、+98,775／−2,705 行。沿用 2026-10-01 的做法，
+依 release 邊界與目錄分區判定，不逐 commit 審。注意：`#1287`（10-06）把 `VERSION` 設為 0.1.14，`#1299`（同日）撤回為 0.1.13，
+`#1378`（10-09）重新發版，v0.1.14 tag 即打在該 merge `4572f19`，`VERSION` 檔為 0.1.14，故以 tag 為準。
+
+### 區域判定
+
+| 區域（規模） | 判定與理由 |
+| --- | --- |
+| `paulsha_cortex/trust_root`（12 檔、約 14.4k 行：`cortex upgrade`、legacy adoption、帳號 uid 自動配號、installer sudo 規則） | 不適用。fork 沒有 `trust_root`，Windows 原生、不走多 UID 系統部署（同 2026-10-01 判定）。 |
+| `qualification/`（driver、legacy_fixture）與 `tests/test_qualification_*`、canary 修正（標題含 canary 或 qualification 的 PR 共 16 筆） | 不適用。上游 release 驗證與 Linux canary，fork 不發 release artifact。 |
+| `paulsha_cortex/coordinator`（42 檔、約 11.9k 行：retry-build、owner-bound reclaim、ship merge gate 等待、task-memory disposition、autosync） | 待採用，隨 v0.1.9–v0.1.11 那批 coordinator 契約整批併入；單獨移植會缺相依。其中 owner-bound reclaim 是三 UID 部署專屬。 |
+| `monitor`（`decision_projection.py` 新增、`providers.py`、`work_api.py`）、`porcelain`（`task_memory_canary`、`service`、`quota`）、`control/contract.py`、`cli.py` | 待採用，同上，隨 coordinator。`runtime_attestation.py`／`porcelain/service.py` 的 systemd wrapper 判定屬 Linux，不適用。 |
+| `.github/workflows/release.yml`、`rc-qualification.yml`、`deployment-canary.yml`、`VERSION` | 不適用。fork 版本號與發版獨立。 |
+| `docs/superpowers`（59 檔、約 9.4k 行）、`.cortex/work-items.yaml`、`openspec`、`changelog.d`、`README.md` | 不適用。上游的規劃、work item 進度與自家文件。 |
+
+上游此區間沒有純 Windows 或 CJK 相關修正（`gh pr`／`gh issue` 標題逐筆掃過，無 Windows、CRLF、cp950、路徑分隔字樣）。
+
+### 採用
+
+無。本輪沒有可以脫離 coordinator／trust_root 相依單獨移植、且在 fork 內有對應缺陷的修正。
+
+### 待採用與觸發條件
+
+- coordinator／monitor／porcelain／CLI／control：觸發條件同 2026-10-01，**在獨立分支做完整 release sync（v0.1.14 為整批單位），`tools\dev_check.ps1` 全綠才併入**。目前 fork 已落後上游兩輪 release；`git diff --shortstat 989199f 4572f19`＝482 檔 +98,775／−2,705，`git diff --shortstat HEAD 4572f19 -- paulsha_cortex`（2026-10-25 實測）＝+130,935／−7,621。要不要追上游的 daemon／多 UID 部署模型仍是產品方向決定（要不要追上游的 daemon／多 UID 部署模型），不在維護檢視內自行決定。
+- 觀察項（上游尚未修，所以不移植）：`#1319`（monitor refresh 遇到一份 frontmatter 格式錯誤的 planning artifact 就整個失敗）。
+  fork 的 `paulsha_cortex/monitor/correlation.py:170-194` `read_frontmatter_work_item` 同樣會對無效 slug 丟 `CorrelationError`，
+  缺陷形狀相同。觸發條件：上游修正（隔離單檔並寫入 diagnostics）落地，或 fork 實際遇到 refresh 卡住時，移植「單檔隔離」的做法。
+
+### PR 與 issue（`--state all`）
+
+PR `#1251`–`#1378`（79 筆）：65 merged，皆經 release 軸抵達（canary 與 trust-root 修正不適用，coordinator 修正隨整批待採用；
+`#1257`、`#1273`、`#1287`、`#1299`、`#1377` 為發版與撤回）。14 closed 未合併：`#1316`、`#1318`、`#1324`、`#1326`、`#1327`、
+`#1328`、`#1330`、`#1331`、`#1348`、`#1349`、`#1351`、`#1352`、`#1355`、`#1358` 皆為 Cortex 產生的 `feat(workflow): 完成 <slug>`
+交付 PR，2026-10-09 09:42Z 同批關閉；對應 issue 除 `#1339` 已 closed／completed 外，其餘 13 筆仍 open，內容皆為
+上游 daemon、sandbox（bubblewrap）、trust-root 部署與 coordinator 重試機制的自家缺陷，follow-upstream，沒有 Windows 專屬修正，也不是被拒收。
+
+Issue `#1238`–`#1378`（含 PR 編號共用序號，實際 issue 49 筆）：30 closed、19 open（`#1283`、`#1289`、`#1291`、`#1293`、`#1296`、
+`#1300`、`#1302`、`#1304`–`#1307`、`#1312`–`#1314`、`#1319`–`#1321`、`#1338`、`#1340`），皆為上游進行中的 work item，
+follow-upstream，不單獨處理；`#1319` 見上方觀察項。
+
+### 水位
+
+- commit：`4572f19`（v0.1.14）；PR：`1378`；issue：`1378`；日期 2026-10-25。
 
 ## 2026-10-01：v0.1.9／v0.1.10／v0.1.11 release 審查（baseline 推進到 v0.1.11）
 
