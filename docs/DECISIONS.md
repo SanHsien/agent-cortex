@@ -134,3 +134,12 @@ porcelain 契約整批列為「待採用」，release／trust_root／qualificati
 不是「已全部併入」。
 
 **觸發條件**：在獨立分支做完整 release sync，並以完整測試套件驗證。逐項判定見 [`UPSTREAM.md`](UPSTREAM.md) 同日條目。
+
+## 2026-10-26：觀察清單（上游原有程式的缺陷，fork 不改）
+
+深度掃描在 `paulsha_cortex/_yaml.py` 的 subset parser 找到下列缺陷。程式是上游原有（上游 tip 相同），依 fork 規則不在此修，觸發條件＝上游修正落地，或 fork 實際讀到受影響的 frontmatter。
+
+- **單引號純量被當 Python 字面值**：`x: 'C:\new\temp'` 解成含換行與 tab 的字串（YAML 單引號內反斜線是字面字元）；`x: 'it''s'` 解成 `its`（應為 `it's`）；`x: "a" "b"` 靜默解成 `ab`（應報錯）。
+- **非 ASCII 數字**：`x: ²` 通過 `str.isdigit()` 後 `int()` 丟出 `ValueError`，不是呼叫端捕捉的 `YAMLError`。
+- **行內註解不剝除**：`x: a # c` 解成 `a # c`。
+- **巢狀行內清單**：`x: [a, [b, c]]` 丟 `YAMLError`（明確失敗，非靜默）。
