@@ -383,4 +383,3 @@ def test_strict_still_fails_on_an_uncovered_aged_floor(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
     assert _run_freshness_main(monkeypatch, tmp_path, [_aged_row()], "--strict") == 1
-
