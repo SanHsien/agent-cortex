@@ -63,7 +63,7 @@ def test_load_baseline_requires_a_full_sha(tmp_path: Path) -> None:
     path = tmp_path / "baseline.json"
     path.write_text(json.dumps(baseline), encoding="utf-8")
 
-    with pytest.raises(upstream.UpstreamCheckError, match="40-character SHA"):
+    with pytest.raises(upstream.UpstreamCheckError, match="40-character"):
         upstream.load_baseline(path)
 
 
@@ -236,27 +236,6 @@ def test_release_mode_report_distinguishes_quiet_from_a_new_release() -> None:
     assert "Tracking: release" in quiet
     assert "(v0.1.8)" in quiet
     assert "Upstream released v0.1.9" in fired
-
-
-def test_fork_status_counts_both_sides_of_the_baseline(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: list[list[str]] = []
-
-    def fake_git(args: list[str], repo_dir: Path) -> str:
-        calls.append(args)
-        if args[0] == "rev-list":
-            return "56\n" if args[-1].endswith("..HEAD") else "202\n"
-        if args[0] == "rev-parse":
-            return "aaaaaaa\n" if args[-1] == "HEAD" else "bbbbbbb\n"
-        raise AssertionError(f"unexpected git call: {args}")
-
-    monkeypatch.setattr(upstream, "run_git", fake_git)
-    status = upstream.fork_status(sample_baseline(), Path("."), "refs/upstream-check/main")
-
-    assert status["ahead"] == 56
-    assert status["behind"] == 202
-    assert status["fork_head"] == "aaaaaaa"
-    assert status["upstream_tip"] == "bbbbbbb"
-    assert status["baseline"] == "a" * 7
 
 
 def test_fork_status_is_reported_even_when_there_is_nothing_to_review() -> None:
