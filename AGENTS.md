@@ -136,3 +136,7 @@ policy_version: 1.0.19
 - **R-23（引擎 pin attestation）**：`policy-check.yml` 的 reusable workflow pin、`policy_engine_ref`、`.project-policy.yml` 的 `policy_version` 必須同步對齊。
 - **R-24（moc-alignment）**：僅在 `.project-policy.yml` 宣告 `moc` 時生效；未宣告則 not-applicable。
 - **升版流程**：調整 policy pin 前，先以目標引擎版本在本機實跑 policy-check 確認零 fail，再推送分支。
+
+## 路線圖
+
+- `ROADMAP.md` 是本 repo 後續工作的單一真相源。完成或新增工作時，在同一個 commit 更新它：做完的列刪掉、新工作加進去。不要在其他文件另列待辦。
