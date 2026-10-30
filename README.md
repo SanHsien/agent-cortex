@@ -233,4 +233,4 @@ Upstream：[`hamanpaul/paulsha-cortex`](https://github.com/hamanpaul/paulsha-cor
 
 ## 多 Agent 流水線
 
-本 repo 是 [agent-relay](https://github.com/SanHsien/agent-relay) 多 Agent 派工與驗收流水線的一環（角色：Windows 原生控制平面、開新 Session）。與 agent-relay 的整合規劃中（Phase 2）。協定規格與所有相關 repo 的總目錄見 agent-relay。
+本 repo 是 [agent-relay](https://github.com/SanHsien/agent-relay) 多 Agent 派工與驗收流水線的一環（角色：Windows 原生控制平面、開新 Session）。agent-relay 透過 `AGENT_RELAY_CORTEX` 環境變數或 `cortex_path` 設定指向本 repo，import `launcher.build_*_argv` 組建工人指令。協定規格與所有相關 repo 的總目錄見 agent-relay。

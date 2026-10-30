@@ -1,8 +1,8 @@
 # Fork 維護說明
 
-最後評估：2026-08-22
+最後評估：2026-10-30
 
-本 repository 是 [`hamanpaul/paulsha-cortex`](https://github.com/hamanpaul/paulsha-cortex) 的 GitHub fork。定位是 **Windows-first development fork**：用於研究、開發與驗證多 Agent 工程治理，不宣稱已可直接承載 production 自主循環。
+本 repository 源自 [`hamanpaul/paulsha-cortex`](https://github.com/hamanpaul/paulsha-cortex)，定位是 **Windows-first development fork**：用於研究、開發與驗證多 Agent 工程治理，不宣稱已可直接承載 production 自主循環。GitHub API 已回傳 `fork=false`（fork 網路關係已脫離），但本 repo 仍透過 `upstream` remote 與 release tag 追蹤上游。
 
 ## 為什麼保留這個 fork
 
@@ -57,8 +57,9 @@ gh pr list --repo hamanpaul/paulsha-cortex --state all --limit 20
 push 或發 release，需要維護者在當次對話明確同意回貢；「fork 一份」「建開發環境」「比照其他 repo」
 都不是同意。
 
-根因是機制不是粗心：`gh` 在 fork clone 的**預設 repo 就是上游**——本 repo 的 clone 原本
-`gh repo set-default --view` 回的就是 `hamanpaul/paulsha-cortex`，所以裸跑 `gh pr create` 必然打上去。
+根因是教訓不是理論：fork 關係存續期間 `gh` 的預設 repo 曾指向上游（`gh repo set-default --view`
+回 `hamanpaul/paulsha-cortex`），2026-08-22 就因此誤開了 `hamanpaul/paulsha-cortex#787`。fork
+關係雖已脫離（`fork=false`），`gh repo set-default` 仍是防止誤操作的必要步驟。
 
 ```powershell
 gh repo set-default SanHsien/agent-cortex   # 每個 clone 先跑一次

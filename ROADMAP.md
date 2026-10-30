@@ -4,13 +4,12 @@
 > 現況段的數字是 2026-10-29 依 `main` `4b1046de0331` 查的快照，開工前先重查 GitHub。
 
 ## 現況
-`hamanpaul/paulsha-cortex` 的 Windows-first 維護型分支，負責多 Agent 交付流程（Candidate → Verify → Independent Review → Delivery → CompletionRecord），見 `README.md:216-224`。2026-10-29 查：open issue／PR 0、Dependabot 與 code scanning open 0，`main` 上 Tests、CodeQL、Dependency freshness、Upstream check 最近一次皆 success（2026-10-29 `gh run list -R SanHsien/agent-cortex -b main`）；上游最新 release 仍是 v0.1.14（2026-10-09），已審到 v0.1.14（`tools/upstream_baseline.json` `reviewed_release`）。卡點是 coordinator／monitor／porcelain 整批落後上游兩輪 release，要不要追是產品方向決定（`docs/UPSTREAM.md:40`）；另 `gh api repos/SanHsien/agent-cortex` 回 `fork=false`，但 `docs/FORK.md:5` 與 `docs/DECISIONS.md:7-12` 仍寫「GitHub fork」。
+`hamanpaul/paulsha-cortex` 的 Windows-first 維護型分支，負責多 Agent 交付流程（Candidate → Verify → Independent Review → Delivery → CompletionRecord），見 `README.md:216-224`。2026-10-29 查：open issue／PR 0、Dependabot 與 code scanning open 0，`main` 上 Tests、CodeQL、Dependency freshness、Upstream check 最近一次皆 success（2026-10-29 `gh run list -R SanHsien/agent-cortex -b main`）；上游最新 release 仍是 v0.1.14（2026-10-09），已審到 v0.1.14（`tools/upstream_baseline.json` `reviewed_release`）。卡點是 coordinator／monitor／porcelain 整批落後上游兩輪 release，要不要追是產品方向決定（`docs/UPSTREAM.md:40`）。`gh api repos/SanHsien/agent-cortex` 回 `fork=false`，文件已對齊（2026-10-30）。
 
 ## 近期：可以直接動手
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
 | 依政策停用 `agy` executor：fork 生效的 model-identities roster 不再列 `executor: agy`（或以設定關閉該身分），並在 `docs/DECISIONS.md` 寫明理由與觸發條件 | 維護者 2026-10-27 政策：第三方 agent 不得經 `agy --print` 等方式使用 Antigravity 個人訂閱；內建 roster 把 agy 排第一順位做 planning／review | `grep -n "executor: agy" paulsha_cortex/coordinator/data/model-identities.yaml` 無輸出（或設定層證明該身分停用）；`pwsh -NoProfile -File tools\dev_check.ps1` 全綠；planning 身分改由其他 independence_domain 承接的測試存在且通過 | Claude Opus | `paulsha_cortex/coordinator/data/model-identities.yaml:4-11`；`paulsha_cortex/coordinator/launcher.py:790`（`agy --print`） |
-| 三處過期敘述與實況對齊：`docs/FORK.md` 與 `docs/DECISIONS.md` §1 的「GitHub fork 關係」、§1 寫死的 v0.1.5 水位、`README.md` 說與 agent-relay「整合規劃中」 | GitHub 已回 `fork=false`；實際已審到 v0.1.14；agent-relay 已透過 `AGENT_RELAY_CORTEX`／`cortex_path` import 本 repo 的 `launcher.build_*_argv` 組工人指令 | `gh api repos/SanHsien/agent-cortex --jq .fork` 的結果與兩份文件敘述一致；`DECISIONS.md` §1 改連 `docs/UPSTREAM.md`、不寫死水位；README 該節描述 relay 現行的 import 方式；dev_check 文件連結檢查綠 | Claude Sonnet | `docs/FORK.md:5`；`docs/DECISIONS.md:7-12`；`README.md:236`；agent-relay `agent_relay/dispatch.py:312-370` |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |

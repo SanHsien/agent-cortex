@@ -1,15 +1,15 @@
 # agent-cortex 現行決策
 
-最後修訂：2026-08-11
+最後修訂：2026-10-30
 
 本檔只保留仍影響本 fork 維護與實作的取捨。操作步驟見 [`DEVELOPMENT.md`](DEVELOPMENT.md)，來源與同步方法見 [`FORK.md`](FORK.md)，版本歷史見 [`CHANGELOG.md`](../CHANGELOG.md)。
 
-## 1. 保留 GitHub fork 關係
+## 1. 追蹤 upstream（非 GitHub fork）
 
 - `origin` 指向 `SanHsien/agent-cortex`，`upstream` 指向 `hamanpaul/paulsha-cortex`。
-- 目前不改產品名稱、不重寫歷史、不離開 fork network；先保留低成本追蹤 upstream 的能力。
-- 初始評估水位為 upstream `b868760`／v0.1.4。每次同步只從這個水位之後評估，並更新本節。
-- 最新已評估水位為 upstream `b79c74a`／v0.1.5；逐 PR 決策與下次起點見 [`UPSTREAM.md`](UPSTREAM.md)。
+- GitHub API 回傳 `fork=false`（fork 網路關係已脫離）；本 repo 透過 `upstream` remote 與 release tag 追蹤上游。
+- 不改產品名稱、不重寫歷史；保留低成本追蹤 upstream 的能力。
+- 初始評估水位為 upstream `b868760`／v0.1.4。最新已評估水位與逐 release 決策見 [`UPSTREAM.md`](UPSTREAM.md)。
 
 ## 2. 定位為 research/development fork
 
