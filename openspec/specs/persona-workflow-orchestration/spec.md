@@ -119,12 +119,17 @@ Verify/review identity MUST以schema v2明示`review` capability且其independen
 - **AND**forged、stale或unknown evidence state MUST保留`needs_human`且不得dispatch
 
 ### Requirement: Agy launcher必須使用safe plan sandbox
-`agy` launcher MUST使用headless print、plan mode與sandbox，MUST NOT加入unsafe permission bypass。Model identity registry MUST登錄`agy + gemini-3.1-pro-high`（`agy models`實際輸出的kebab id，非顯示名）為`google`並由`doctor --probe-live`驗capability；版本字串 alone MUST NOT視為可用。
+`agy` launcher MUST使用headless print、plan mode與sandbox，MUST NOT加入unsafe permission bypass。Packaged default model identity registry MUST NOT登錄`agy`（依維護者政策停用）；`agy`只在host overlay明確宣告`agy` identity（如`agy + gemini-3.1-pro-high`，`agy models`實際輸出的kebab id，非顯示名，domain為`google`）時才啟用，此時 MUST由`doctor --probe-live`驗capability；版本字串 alone MUST NOT視為可用。未宣告`agy`時，`doctor` MUST只要求registry至少有一個planning identity，並回報`agy: pass / disabled by policy`，且Manager MUST NOT選agy執行brainstorm。
 
 #### Scenario: CLI介面漂移
-- **WHEN**agy存在但plan/sandbox smoke失敗或model identity不符
+- **WHEN**overlay已宣告agy，且agy存在但plan/sandbox smoke失敗或model identity不符
 - **THEN**doctor回non-ready diagnostic
 - **THEN**Manager不得選agy執行brainstorm
+
+#### Scenario: Overlay未宣告agy
+- **WHEN**有效registry沒有`agy` identity
+- **THEN**`doctor --probe-live`回報`agy: pass / disabled by policy`且不呼叫`agy`
+- **THEN**secondary選擇略過`agy/google`，改由其他可用異質identity承接
 
 ### Requirement: Brainstorm peer與Foreign Reviewer必須是獨立gate
 Builder MUST在`feature/<issue>-<slug>` worktree執行deterministic Candidate verification。Foreign Reviewer MUST使用不同於Builder的independence domain並在detached exact Candidate HEAD審查。Brainstorm peer、ForeignReview與current-HEAD delivery review MUST保存不同gate/evidence refs，任一 MUST NOT取代另一個；delivery review MUST明確標為`copilot`或`maintainer-review`，不得互相偽裝。

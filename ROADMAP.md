@@ -9,7 +9,6 @@
 ## 近期：可以直接動手
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
-| 把 openspec 規格改成與停用 agy 的現況一致 | 無（現在規格與程式碼互相矛盾，只有 `docs/DECISIONS.md` 記了偏離） | `openspec/specs/governed-delivery-closure/spec.md:155`（`--probe-live` MUST 檢查 agy）與 `openspec/specs/persona-workflow-orchestration/spec.md:122`（registry MUST 登錄 agy）改成「overlay 宣告才啟用」；同時查 `docs/adr/0001-*` 是否也寫 doctor 必驗 agy；`tools\dev_check.ps1` 全綠 | Claude Sonnet | `paulsha_cortex/doctor.py`（`_registry_declares_agy`）；上述兩份 spec |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |

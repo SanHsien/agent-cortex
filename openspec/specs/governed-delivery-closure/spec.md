@@ -152,7 +152,7 @@ V1 WorkflowRun只支援唯一mapped PR、唯一OpenSpec change與唯一Todo path
 - **THEN**Manager不得寫terminal CompletionRecord或投影done
 
 ### Requirement: Deployment前必須live doctor與單repo canary
-`cortex doctor --probe-live` MUST檢查gh auth/permissions、auto label、preflight executable、model identities、agy headless smoke與service paths。系統 MUST先在`paulsha-cortex`用低風險docs-only issue完成異質brainstorm→build→ForeignReview→archive→preflight→typed current-HEAD maintainer review→merge commit→done canary；通過前 MUST NOT在其他repo啟用auto label。
+`cortex doctor --probe-live` MUST檢查gh auth/permissions、auto label、preflight executable、model identities、service paths，並僅在有效registry（含host overlay）宣告`agy` identity時 MUST檢查agy headless smoke；未宣告時 MUST回報`agy: pass / disabled by policy`且不得呼叫`agy`。系統 MUST先在`paulsha-cortex`用低風險docs-only issue完成異質brainstorm→build→ForeignReview→archive→preflight→typed current-HEAD maintainer review→merge commit→done canary；通過前 MUST NOT在其他repo啟用auto label。
 
 #### Scenario: Canary任一gate失敗
 - **WHEN**canary未完成strict closure或doctor任一required probe失敗

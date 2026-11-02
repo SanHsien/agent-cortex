@@ -39,7 +39,7 @@ Title、slug、branch、issue number token 等 heuristic 只可做 inferred disp
 
 Completeness gate 在 accepted spec/design/plan 缺失、出現 TBD 或未決策項時要求異質 brainstorm：primary planner 產 question pack；secondary planner 只回 evidence，且 independence domain 不同；primary 整合與落檔。Secondary 預設選 `agy/google → claude/anthropic → codex/openai`，排除 primary domain；無可用異質 identity 時 fail-closed。
 
-`agy` launcher 只使用 `--print --mode plan --sandbox`，禁止 unsafe bypass；model identity registry 預設登錄 `agy + Gemini 3.1 Pro (High) → google`，deployment 必須 live probe，不能只相信靜態版本字串。
+`agy` launcher 只使用 `--print --mode plan --sandbox`，禁止 unsafe bypass；model identity registry 原預設登錄 `agy + Gemini 3.1 Pro (High) → google`（2026-10-31 起依政策停用，只在 host overlay 宣告時才啟用，見 `docs/DECISIONS.md`）；啟用時 deployment 必須 live probe，不能只相信靜態版本字串。
 
 ### 5. Delivery 是 bounded、current-HEAD、remote-verified closure
 
