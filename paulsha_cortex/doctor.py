@@ -180,7 +180,7 @@ def _identity_probe(env: Mapping[str, str], agents_root: Path) -> ProbeResult:
     return ProbeResult(
         "model-identities",
         "pass",
-        f"runtime-validated schema v{schema_version} with canonical agy identity",
+        f"runtime-validated schema v{schema_version} with a planning identity",
         True,
     )
 
@@ -211,11 +211,10 @@ def _identity_failure_detail(exc: BaseException) -> str:
             "fix identity schema and "
             "capability settings."
         )
-    if "canonical agy planning identity missing" in message:
+    if "planning identity missing" in message:
         return (
-            "canonical agy planning identity missing (category: registry-invalid); "
-            "define planning identity "
-            "with `executor: agy` and planning capability."
+            "planning identity missing (category: registry-invalid); "
+            "define at least one identity with planning capability."
         )
     return (
         "model-identities validation failed. Ensure a valid identities file exists, "
@@ -225,23 +224,27 @@ def _identity_failure_detail(exc: BaseException) -> str:
 
 def _load_runtime_model_identities(config_root: Path) -> int:
     """Validate the exact registry consumed by planner/reviewer selection."""
-    from .coordinator.model_identities import (
-        AGY_DOMAIN,
-        AGY_LIVE_PROBE,
-        AGY_MODEL_ID,
-        load_model_identities,
-    )
+    from .coordinator.model_identities import load_model_identities
 
     registry = load_model_identities(config_root)
-    identity = registry.get("agy", AGY_MODEL_ID)
-    if (
-        identity is None
-        or identity.independence_domain != AGY_DOMAIN
-        or "planning" not in identity.capabilities
-        or identity.live_probe != AGY_LIVE_PROBE
-    ):
-        raise ValueError("canonical agy planning identity missing")
+    if not any("planning" in i.capabilities for i in registry.identities):
+        raise ValueError("planning identity missing")
     return int(registry.schema_version)
+
+
+def _registry_declares_agy(env: Mapping[str, str], agents_root: Path) -> bool:
+    """Whether the effective registry lists an agy identity (policy: off by default)."""
+
+    config_root = Path(
+        env.get("PSC_PROJECT_CONFIG_ROOT", str(agents_root / "config" / "paulsha"))
+    ).expanduser()
+    try:
+        from .coordinator.model_identities import load_model_identities
+
+        registry = load_model_identities(config_root)
+    except (ImportError, OSError, ValueError):
+        return False
+    return any(identity.executor == "agy" for identity in registry.identities)
 
 
 def _review_sandbox_probe(
@@ -899,13 +902,19 @@ def run_doctor(
         state_probe,
         socket_probe,
     ]
+    agy_declared = _registry_declares_agy(effective, agents_root)
+    agy_disabled = ProbeResult("agy", "pass", "disabled by policy", False)
     if not probe_live:
         probes.extend(
             (
                 ProbeResult("gh-auth", "warn", "live probe skipped", False),
                 ProbeResult("gh-permissions", "warn", "live probe skipped", False),
                 ProbeResult("auto-label", "warn", "live probe skipped", False),
-                ProbeResult("agy", "warn", "live probe skipped", False),
+                (
+                    ProbeResult("agy", "warn", "live probe skipped", False)
+                    if agy_declared
+                    else agy_disabled
+                ),
             )
         )
         return DoctorReport(tuple(probes))
@@ -946,6 +955,9 @@ def run_doctor(
         probes.append(
             ProbeResult("auto-label", "pass" if label_code == 0 else "fail", "auto label exists" if label_code == 0 else "auto label missing", True)
         )
+    if not agy_declared:
+        probes.append(agy_disabled)
+        return DoctorReport(tuple(probes))
     ready, _diagnostic = (agy_probe or _default_agy_probe)()
     probes.append(
         ProbeResult("agy", "pass" if ready else "fail", "safe plan/sandbox capability ready" if ready else "safe agy capability unavailable", True)

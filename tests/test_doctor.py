@@ -248,7 +248,7 @@ def test_identity_probe_uses_runtime_schema_validator(monkeypatch, tmp_path: Pat
             "model-identities schema_version must be one of [1, 2], got 99",
             ("schema", "contract", "registry-invalid", "model-identities"),
         ),
-        ("canonical agy planning identity missing", ("canonical", "agy", "planning", "registry-invalid")),
+        ("planning identity missing", ("planning", "identity", "registry-invalid")),
     ],
 )
 def test_identity_probe_returns_actionable_categories_for_known_errors(
@@ -266,6 +266,119 @@ def test_identity_probe_returns_actionable_categories_for_known_errors(
     lowered = detail.lower()
     assert all(needle in lowered for needle in needles)
     assert "/private/operator" not in detail
+
+
+def test_runtime_identity_validator_passes_with_packaged_roster_and_no_agy(tmp_path: Path) -> None:
+    from paulsha_cortex.doctor import _load_runtime_model_identities
+
+    # 空 config root：沒有任何 custom overlay，只靠 packaged roster（已停用 agy）。
+    assert _load_runtime_model_identities(tmp_path) == 3
+    result = _identity_probe({"PSC_PROJECT_CONFIG_ROOT": str(tmp_path)}, tmp_path)
+    assert result.status == "pass"
+    assert "agy" not in result.detail.lower()
+
+
+def test_identity_probe_failure_detail_never_asks_for_agy(monkeypatch, tmp_path: Path) -> None:
+    def reject(_root):
+        raise ValueError("planning identity missing")
+
+    monkeypatch.setattr("paulsha_cortex.doctor._load_runtime_model_identities", reject)
+    detail = _identity_probe({"PSC_PROJECT_CONFIG_ROOT": str(tmp_path)}, tmp_path).detail
+    assert "agy" not in detail.lower()
+    assert "registry-invalid" in detail
+
+
+def _live_doctor_runner(argv, **kwargs):
+    endpoint = " ".join(argv)
+    if argv[:3] == ["gh", "auth", "status"]:
+        return Result()
+    if endpoint.endswith("--include repos/acme/demo"):
+        return Result(
+            raw=(
+                "HTTP/2 200 OK\r\nX-OAuth-Scopes: repo\r\n\r\n"
+                '{"private":true,"permissions":{"push":true}}'
+            )
+        )
+    if "labels/cortex%3Aauto-on-going" in endpoint:
+        return Result({"name": "cortex:auto-on-going"})
+    raise AssertionError(argv)
+
+
+def _patch_live_doctor(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "paulsha_cortex.doctor._load_runtime_preflight_command",
+        lambda environment: (environment["PSC_PREFLIGHT_CMD"],),
+    )
+    monkeypatch.setattr(
+        "paulsha_cortex.doctor._request_runtime_monitor",
+        lambda socket_path, payload: {
+            "ok": True,
+            "data": {"schema": "cortex-work/v1", "items": [], "sequence": 0},
+        },
+    )
+
+
+def test_probe_live_does_not_call_agy_when_registry_has_no_agy_identity(
+    tmp_path: Path, monkeypatch
+) -> None:
+    home, env = _layout(tmp_path)
+    _patch_live_doctor(monkeypatch)
+    agy_calls: list[str] = []
+
+    def agy_probe():
+        agy_calls.append("called")
+        return True, "ready"
+
+    monkeypatch.setattr("paulsha_cortex.doctor._default_agy_probe", agy_probe)
+    report = run_doctor(
+        probe_live=True,
+        repo="acme/demo",
+        env=env,
+        home=home,
+        runner=_live_doctor_runner,
+    )
+
+    agy = next(probe for probe in report.probes if probe.name == "agy")
+    assert (agy.status, agy.detail, agy.required) == ("pass", "disabled by policy", False)
+    assert agy_calls == []
+    assert report.ok
+
+
+def test_probe_live_runs_agy_probe_only_when_overlay_declares_agy_identity(
+    tmp_path: Path, monkeypatch
+) -> None:
+    home, env = _layout(tmp_path)
+    _patch_live_doctor(monkeypatch)
+    overlay = Path(env["PSC_PROJECT_CONFIG_ROOT"]) / "model-identities.yaml"
+    overlay.write_text(
+        "schema_version: 3\n"
+        "identities:\n"
+        "  - executor: agy\n"
+        "    model_id: gemini-3.1-pro-high\n"
+        "    independence_domain: google\n"
+        "    capabilities: [planning, review]\n"
+        "    live_probe: agy-plan-sandbox\n",
+        encoding="utf-8",
+    )
+    agy_calls: list[str] = []
+
+    def agy_probe():
+        agy_calls.append("called")
+        return True, "ready"
+
+    report = run_doctor(
+        probe_live=True,
+        repo="acme/demo",
+        env=env,
+        home=home,
+        runner=_live_doctor_runner,
+        agy_probe=agy_probe,
+    )
+
+    agy = next(probe for probe in report.probes if probe.name == "agy")
+    assert (agy.status, agy.required) == ("pass", True)
+    assert agy.detail != "disabled by policy"
+    assert agy_calls == ["called"]
 
 
 def test_identity_probe_unknown_error_uses_safe_boundary_message(monkeypatch, tmp_path: Path) -> None:

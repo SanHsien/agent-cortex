@@ -278,17 +278,14 @@ def test_packaged_roster_positive_load_and_bindings(tmp_path: Path) -> None:
     registry = load_model_identities(tmp_path, use_packaged_default=True)
     by_key = {(item.executor, item.model_id): item for item in registry.identities}
     assert set(by_key) == {
-        ("agy", AGY_MODEL_ID),
         ("copilot", "gpt-5.4"),
         ("claude", "sonnet"),
         ("codex", "gpt-5.3-codex-spark"),
         ("cg", "glm-5.2"),
     }
-    agy = by_key[("agy", AGY_MODEL_ID)]
-    assert agy.independence_domain == "google"
-    assert agy.live_probe == "agy-plan-sandbox"
-    assert set(agy.capabilities) == {"planning", "review"}
     assert by_key[("copilot", "gpt-5.4")].capabilities == ("build",)
+    assert by_key[("claude", "sonnet")].independence_domain == "anthropic"
+    assert by_key[("claude", "sonnet")].capabilities == ("planning", "build", "review")
     assert by_key[("cg", "glm-5.2")].independence_domain == "zhipu"
     # roster 全體為候選宣告：無任何實測封套欄位（#453 R4 資料層一眼可辨）。
     for identity in registry.identities:

@@ -4,12 +4,12 @@
 > 現況段的數字是 2026-10-29 依 `main` `4b1046de0331` 查的快照，開工前先重查 GitHub。
 
 ## 現況
-`hamanpaul/paulsha-cortex` 的 Windows-first 維護型分支，負責多 Agent 交付流程（Candidate → Verify → Independent Review → Delivery → CompletionRecord），見 `README.md:216-224`。2026-10-29 查：open issue／PR 0、Dependabot 與 code scanning open 0，`main` 上 Tests、CodeQL、Dependency freshness、Upstream check 最近一次皆 success（2026-10-29 `gh run list -R SanHsien/agent-cortex -b main`）；上游最新 release 仍是 v0.1.14（2026-10-09），已審到 v0.1.14（`tools/upstream_baseline.json` `reviewed_release`）。卡點是 coordinator／monitor／porcelain 整批落後上游兩輪 release，要不要追是產品方向決定（`docs/UPSTREAM.md:40`）。`gh api repos/SanHsien/agent-cortex` 回 `fork=false`，文件已對齊（2026-10-30）。
+`hamanpaul/paulsha-cortex` 的 Windows-first 維護型分支，負責多 Agent 交付流程（Candidate → Verify → Independent Review → Delivery → CompletionRecord），見 `README.md:216-224`。2026-10-29 查：open issue／PR 0、Dependabot 與 code scanning open 0，`main` 上 Tests、CodeQL、Dependency freshness、Upstream check 最近一次皆 success（2026-10-29 `gh run list -R SanHsien/agent-cortex -b main`）；上游最新 release 仍是 v0.1.14（2026-10-09），已審到 v0.1.14（`tools/upstream_baseline.json` `reviewed_release`）。卡點是 coordinator／monitor／porcelain 整批落後上游兩輪 release，要不要追是產品方向決定（`docs/UPSTREAM.md:40`）。`gh api repos/SanHsien/agent-cortex` 回 `fork=false`，文件已對齊（2026-10-30）。內建 roster 已依政策停用 agy executor，planning 身分改由 anthropic 承接（2026-10-31）。
 
 ## 近期：可以直接動手
 | 項目 | 為什麼 | 驗收方式 | 建議執行者 | 證據 |
 | --- | --- | --- | --- | --- |
-| 依政策停用 `agy` executor：fork 生效的 model-identities roster 不再列 `executor: agy`（或以設定關閉該身分），並在 `docs/DECISIONS.md` 寫明理由與觸發條件 | 維護者 2026-10-27 政策：第三方 agent 不得經 `agy --print` 等方式使用 Antigravity 個人訂閱；內建 roster 把 agy 排第一順位做 planning／review | `grep -n "executor: agy" paulsha_cortex/coordinator/data/model-identities.yaml` 無輸出（或設定層證明該身分停用）；`pwsh -NoProfile -File tools\dev_check.ps1` 全綠；planning 身分改由其他 independence_domain 承接的測試存在且通過 | Claude Opus | `paulsha_cortex/coordinator/data/model-identities.yaml:4-11`；`paulsha_cortex/coordinator/launcher.py:790`（`agy --print`） |
+| 把 openspec 規格改成與停用 agy 的現況一致 | 無（現在規格與程式碼互相矛盾，只有 `docs/DECISIONS.md` 記了偏離） | `openspec/specs/governed-delivery-closure/spec.md:155`（`--probe-live` MUST 檢查 agy）與 `openspec/specs/persona-workflow-orchestration/spec.md:122`（registry MUST 登錄 agy）改成「overlay 宣告才啟用」；同時查 `docs/adr/0001-*` 是否也寫 doctor 必驗 agy；`tools\dev_check.ps1` 全綠 | Claude Sonnet | `paulsha_cortex/doctor.py`（`_registry_declares_agy`）；上述兩份 spec |
 
 ## 中期：等條件成立再做
 | 項目 | 觸發條件 | 驗收方式 | 建議執行者 | 證據 |

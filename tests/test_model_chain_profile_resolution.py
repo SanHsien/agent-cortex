@@ -240,16 +240,18 @@ _PRE_ROSTER_REGISTRY = IdentityRegistry.from_rows(
 )
 
 
-def test_planner_selection_unchanged_after_roster(tmp_path: Path) -> None:
+def test_planner_selection_taken_over_by_other_independence_domain(tmp_path: Path) -> None:
     roster = load_model_identities(tmp_path, use_packaged_default=True)
     run = _run(sizing_band=None)
-    before = manager._select_workflow_identity(run, _step("planner"), _PRE_ROSTER_REGISTRY)
-    after = manager._select_workflow_identity(run, _step("planner"), roster)
-    # roster 落地前後 planner 首選同為 agy canonical 身分（agy 列首位）。
-    assert (before.executor, before.model_id) == (after.executor, after.model_id) == (
-        "agy",
-        AGY_MODEL_ID,
-    )
+    legacy = manager._select_workflow_identity(run, _step("planner"), _PRE_ROSTER_REGISTRY)
+    selected = manager._select_workflow_identity(run, _step("planner"), roster)
+    # 依 2026-10-27 政策停用 agy：
+    # 既有 agy 候選（google 領域）不再是 packaged roster 的 planner 首選，
+    # 改由其他 independence_domain（claude / anthropic）承接。
+    assert (legacy.executor, legacy.independence_domain) == ("agy", "google")
+    assert (selected.executor, selected.model_id) == ("claude", "sonnet")
+    assert selected.independence_domain == "anthropic"
+    assert selected.independence_domain != legacy.independence_domain
 
 
 def test_secondary_planner_unreachable_without_probe(tmp_path: Path) -> None:
@@ -260,7 +262,7 @@ def test_secondary_planner_unreachable_without_probe(tmp_path: Path) -> None:
         registry=_PRE_ROSTER_REGISTRY, primary=("agy", AGY_MODEL_ID), probes={}
     )
     after = select_secondary_planner(
-        registry=roster, primary=("agy", AGY_MODEL_ID), probes={}
+        registry=roster, primary=("claude", "sonnet"), probes={}
     )
     assert (before.state, before.reason) == (after.state, after.reason) == (
         "needs_human",
