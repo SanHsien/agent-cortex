@@ -1,6 +1,6 @@
 # agent-cortex 現行決策
 
-最後修訂：2026-10-31
+最後修訂：2026-11-05
 
 本檔只保留仍影響本 fork 維護與實作的取捨。操作步驟見 [`DEVELOPMENT.md`](DEVELOPMENT.md)，來源與同步方法見 [`FORK.md`](FORK.md)，版本歷史見 [`CHANGELOG.md`](../CHANGELOG.md)。
 
@@ -151,3 +151,11 @@ porcelain 契約整批列為「待採用」，release／trust_root／qualificati
 **理由**：維護者 2026-10-27 政策：第三方 agent 不得經 `agy --print` 等方式使用 Antigravity 個人訂閱；內建 roster 原先將 agy 排在第一順位做 planning／review，會使自動化排程與 coordinator 在缺乏顯式覆寫時直接嘗試叫用 `agy`。移除該身分後，coordinator 與 workflow run 在使用內建 registry 時不會再主動挑選 `agy`，planning 與 review 依序由 `anthropic`（`claude`）、`openai`（`codex`）等具備相應能力的合格身分承接。
 
 **觸發條件（恢復條件）**：如同 `ROADMAP.md`「刻意不做」列「恢復經 `agy` CLI 使用 Antigravity 個人訂閱的派工管道」所定：改用 `GEMINI_API_KEY` 或 Vertex 的正式 API 計費路徑，且 launcher 不再經個人訂閱 CLI，才重新考慮引入 Google / Gemini 獨立領域的 planning/review 身分。
+
+## 2026-11-05：pytest 下限維持相容性政策
+
+**決定**：test 與 dev extras 的 `pytest>=9.1` 保持不變，兩處宣告行加入 `freshness-hold`。這是常態相容性下限，不是釘版；安裝仍可選用 9.2.0 或更新版本。
+
+**理由**：本次 PyPI 現行版為 9.2.0，沒有已識別的測試需求要求提高至 9.2。宣告下限是相容性承諾，不以新版發佈作為提高下限的理由。已檢視 [pytest 9.2.0 release notes](https://docs.pytest.org/en/stable/changelog.html#pytest-9-2-0-2026-10-27)，本次不修改測試行為或宣稱完成最低版本矩陣驗證。
+
+**重新評估條件**：測試開始依賴較新版 API、必要修正，或支援的 Python／pytest 相容性政策改變時，同步檢視兩個 extras 的下限與 hold。

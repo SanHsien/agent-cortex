@@ -12,6 +12,7 @@
 - `check_dependency_freshness.py --strict` 不再把已有 `# freshness-hold:` 或未過期延後的過期下限當成失敗，與報告狀態和 `needs_attention` 一致。
 
 ### Changed
+- test／dev extras 的 `pytest>=9.1` 加入 `freshness-hold`，保留相容性下限；新版發佈本身不構成提高下限的理由。
 - 新增 `ROADMAP.md` 作為後續工作的單一真相源，`AGENTS.md` 規定完成或新增工作時同一個 commit 更新它。詳見 `changelog.d/roadmap-ssot.md`。
 - 上游 v0.1.12／v0.1.13／v0.1.14（481 個 commit）以 release 邊界審查並記入 `docs/UPSTREAM.md`：trust_root、qualification、release 流程不適用，coordinator／monitor／porcelain 契約維持整批待採用；`#1319` 列為觀察項；baseline 推進到 v0.1.14（`4572f19`），PR／issue 水位 1378。
 

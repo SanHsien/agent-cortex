@@ -18,10 +18,10 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=9.1"]
+test = ["pytest>=9.1"]  # freshness-hold: 保留 pytest 9.1 相容下限；只有測試需要新版 API 或修正時才提高，不追逐現行版。
 dev = [
     "build>=1.6",
-    "pytest>=9.1",
+    "pytest>=9.1",  # freshness-hold: 與 test extra 共用 pytest 9.1 相容下限；只有測試需要新版 API 或修正時才提高。
     "twine>=7",
 ]
 

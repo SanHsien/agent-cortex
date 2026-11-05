@@ -27,4 +27,4 @@
 | 在本 repo 設計 relay 專用介面或信件協定 | 協定與派工契約歸 agent-relay（其 `SPEC.md` 第 7 節）；本 repo 只提供 launcher 被 import | agent-relay 的 SPEC 明文要求本 repo 提供新介面 |
 
 ## 維護方式
-上游以 release tag 為審查單位（不追 `main`，理由見 `docs/UPSTREAM.md:8-11`），`Upstream check` 每週一跑；新 tag 出現才審，審完寫 `docs/UPSTREAM.md` 再推進 baseline。依賴由 `Dependency freshness` 每週檢查，policy 引擎重釘到 `SanHsien/paulsha-conventions` 的新 tag 後跑 dev_check。fork 自有版本號以 `VERSION` 為準，不跟上游 tag。
+上游以 release tag 為審查單位（不追 `main`，理由見 `docs/UPSTREAM.md:8-11`），`Upstream check` 每週一跑；新 tag 出現才審，審完寫 `docs/UPSTREAM.md` 再推進 baseline。依賴由 `Dependency freshness` 每月檢查；pytest 下限採常態相容性政策（`docs/DECISIONS.md` 2026-11-05），需要較新版 API 或必要修正時才重新評估，policy 引擎重釘到 `SanHsien/paulsha-conventions` 的新 tag 後跑 dev_check。fork 自有版本號以 `VERSION` 為準，不跟上游 tag。
