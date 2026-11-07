@@ -37,6 +37,8 @@ PR；落地依 OpenSpec 開 change」，本票即為該 change。
   `capabilities: [planning]`），issue #209 自身修正 comment 的三身分表與此不符；但同一份
   三身分表也出現在 repo 內受版控的 `cost-governance-cluster/todo.md:129`，本票記錄這個
   矛盾並標明尚待與其 owner 對齊，不擅自判定孰是孰非（見 `design.md` D6）。
+  （歷史註記：此為 2026-08-07 當時快照；`agy` 身分已於 2026-10-31 依維護者
+  2026-10-27 政策自 packaged registry 移除，見 `docs/DECISIONS.md`。）
 - 明載既有消費端契約點（`planning.py:456-509` 的 `envelope_lookup` 介面形狀）必須被後續
   實作票沿用，不得另起爐灶。
 - 不實作、不改 `.py`、不新增資料源。

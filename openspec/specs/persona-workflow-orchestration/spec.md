@@ -53,12 +53,12 @@ Deck compiler MUST把每張card的`persona_binding`、`skill_ref`、task-specifi
 - **THEN** launch metadata與manifest persona一致
 
 ### Requirement: 不完整規格必須經異質雙模型brainstorm
-Artifact只有在frontmatter `status: accepted`、必要章節存在且沒有blocking decision marker時才算accepted。Marker parser MUST只把獨立行`TBD`、`[TBD]`、`Decision: TBD`、`決策：未定`或Open Questions中的實際項目視為blocking，MUST忽略inline說明與fenced code。Accepted spec/design/plan缺失或有blocking marker時，primary planner MUST先產question pack；secondary planner MUST來自不同independence domain且只回evidence；primary MUST整合並落檔。Secondary選擇 MUST依可用的`agy/google → claude/anthropic → codex/openai`順序排除primary domain；無異質model、unknown identity或malformed output MUST fail-closed。
+Artifact只有在frontmatter `status: accepted`、必要章節存在且沒有blocking decision marker時才算accepted。Marker parser MUST只把獨立行`TBD`、`[TBD]`、`Decision: TBD`、`決策：未定`或Open Questions中的實際項目視為blocking，MUST忽略inline說明與fenced code。Accepted spec/design/plan缺失或有blocking marker時，primary planner MUST先產question pack；secondary planner MUST來自不同independence domain且只回evidence；primary MUST整合並落檔。Secondary選擇 MUST依可用的`agy/google → claude/anthropic → codex/openai`順序（`agy`僅在有效registry（含host overlay）宣告`agy` identity時才在候選內；packaged預設registry已於2026-10-31依政策停用，見`docs/DECISIONS.md`）排除primary domain；無異質model、unknown identity或malformed output MUST fail-closed。
 
 Planner subprocess與manifest plan card MUST只在temporary disposable checkout執行，並以read-only executor模式啟動；Claude MUST使用`plan`且停用tools、Codex MUST使用`--sandbox read-only`。Manager MUST在成功、nonzero或exception路徑驗sandbox與operator worktree的檔案、empty dirs、directory symlinks與stable metadata；snapshot遇權限錯誤也 MUST先恢復安全traversal再依baseline還原entries、mode與xattrs，restore fault MUST fail-closed。Primary只回傳structured artifact content；Manager MUST在scan時持久化canonical ref、kind、work item與content hash authority，replacement MUST逐欄符合該authority及manifest outputs，不得信任caller hash或filename推測。新檔 MUST no-clobber。Artifact、immutable或既存同內容brainstorm evidence、expected gate ref與registry phase update MUST由durable intent journal形成recoverable transaction；registry未commit的save fault MUST rollback，已commit的restart/resume MUST逐operation重驗type/hash/mode/evidence後保留產物，drift MUST設`needs_human`並保留journal，且不得覆蓋其他work item。
 
-#### Scenario: Agy可用且primary非Google
-- **WHEN** completeness gate觸發且agy live capability/identity probe通過
+#### Scenario: Agy可用且primary非Google（僅限host overlay已宣告agy）
+- **WHEN** completeness gate觸發、host overlay已宣告agy且agy live capability/identity probe通過
 - **THEN** secondary使用Google domain回傳evidence
 - **THEN** primary負責final decisions與artifact write
 

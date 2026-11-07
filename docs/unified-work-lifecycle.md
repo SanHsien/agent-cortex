@@ -182,7 +182,7 @@ V1 terminal delivery 僅支援 GitHub。其他 forge 仍可顯示 read model，�
 
 ## Terminal lifecycle canary
 
-`terminal-lifecycle-canary` confirmed mapping 對應 issue #31。這條 docs-only canary 保持 persona-domain separation：primary `planner` 必須整合 `agy/google` evidence 完成 heterogeneous brainstorm，`planner`、`builder` 與 `reviewer` 則分別在不同 independence domain 產出規劃、最小文件 diff 與獨立審查 evidence。
+`terminal-lifecycle-canary` confirmed mapping 對應 issue #31。這條 docs-only canary 保持 persona-domain separation：primary `planner` 必須整合異質 independence domain 的 evidence（當時為 `agy/google`；2026-10-31 起 `agy` 僅限有效 registry（含 host overlay）宣告時）完成 heterogeneous brainstorm，`planner`、`builder` 與 `reviewer` 則分別在不同 independence domain 產出規劃、最小文件 diff 與獨立審查 evidence。
 
 候選變更必須通過 OpenSpec validation、policy、full preflight、ForeignReview，以及 exact current-HEAD 的 adversarial maintainer review。任一 typed output 或 gate 缺失、失敗或無法對準同一 HEAD 時，workflow 必須 fail-closed 保持 `needs_human`，不得宣稱 terminal completion。
 
