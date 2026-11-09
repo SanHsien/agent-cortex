@@ -1,6 +1,6 @@
 # Upstream tracking
 
-最後檢查：2026-10-25（已審 release：v0.1.14＝`4572f19`；上游 `main` 即 `4572f19`）
+最後檢查：2026-11-10（已審 release：v0.1.14＝`4572f19`；上游 `main` 即 `4572f19`）
 
 自 2026-08-22 起，`.github/workflows/upstream-check.yml` 每週一 11:00（Asia/Taipei）比對的是**上游的 release
 tag**，不是 `main`。`tools/upstream_baseline.json` 的 `track: "release"` 決定這個行為：檢查器問「上游有沒有發出
@@ -10,6 +10,29 @@ tag**，不是 `main`。`tools/upstream_baseline.json` 的 `track: "release"` �
 改追 release 的理由記在這裡，不是為了讓紅燈消失：本 fork 至今四次同步（v0.1.5、v0.1.6、v0.1.7、v0.1.8）
 全部錨定在上游的 tag，而上游 `main` 每天變動多次。追 `main` 會讓每週檢查永遠是紅的、而且列出的目標在讀到報告
 時就已經過期——一個永遠紅的檢查等於沒有檢查。審完把決策寫進本檔，再推進 baseline；先驗證，後推進。
+
+## 2026-11-10：issue #1379 triage（baseline 不動）
+
+範圍：`#1378` 之後唯一新增項目 `#1379`（2026-11-09，OPEN，作者為上游 owner；`--state all` 查，PR 無新增）。
+上游 `main` 仍是 `4572f19`（v0.1.14），沒有新 release、沒有新 commit。
+
+| 項目 | 判定 |
+| --- | --- |
+| `#1379` `fix(coordinator): direct runner 下 commit-spool 寫入與 harvest 用不同 key` | 不適用（缺陷所在機制 fork 沒有），隨整批 coordinator sync 列觀察。 |
+
+對照本 fork 程式碼的證據：`grep -rn "commit-spool\|spool_key_for_job\|prepare_commit_spool\|job_workspace" paulsha_cortex tests`
+無任何命中，`paulsha_cortex/coordinator/` 沒有 `job_workspace.py`。該 issue 的寫入端（`prepare_commit_spool`）與讀取端
+（`harvest_if_spooled`／`commit_bundle_path_for_job`）屬上游 `#637`（git bundle 加 append-only spool）之後的 coordinator 契約，
+也就是上方「待採用」的整批內容，fork 尚未取得，所以缺陷在 fork 內不存在，也沒有可單獨移植的修正（上游本身尚未修，
+issue 標明提案未定）。
+
+觀察項：整批 coordinator release sync 時，若併入 `#637` 的 spool 機制，必須確認寫入與讀取用同一個 spool key
+（dispatch 時的 key 持久化進 job record，或兩端同一 identity），並補 direct 與 systemd-template 各一的回歸測試。
+觸發條件：上游修正 `#1379` 落地，或 fork 開始做 release sync。
+
+### 水位
+
+- commit：`4572f19`（v0.1.14，不變）；PR：`1378`（不變）；issue：`1379`；日期 2026-11-10。
 
 ## 2026-10-25：v0.1.12／v0.1.13／v0.1.14 release 審查（baseline 推進到 v0.1.14）
 
