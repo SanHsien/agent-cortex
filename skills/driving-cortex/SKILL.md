@@ -20,7 +20,7 @@ description: "driving cortex、派工 cortex、cortex work 導向的協作 skill
 
 1. 從 accepted planning artifact 開始：spec/plan/frontmatter 必須有 `status: accepted`、`work_item`、必要章節與 `target_branch`。
 2. 在 `.cortex/work-items.yaml` 加入對應 work item 並對齊 `issue`。
-3. 把 `docs/superpowers/plans/driving-cortex-skill.md` 參考為本批次來源之一，並補齊對應 `openspec/changes/2026-07-26-driving-cortex-skill/tasks.md`。
+3. 把 `docs/superpowers/plans/driving-cortex-skill.md` 參考為本批次來源之一，並補齊對應 `openspec/changes/archive/2026-08-04-2026-07-26-driving-cortex-skill/tasks.md`。
 4. 啟動或重啟 monitor snapshot，確認 work item 在 remote view 出現後再開始調度。
 5. 透過 `cortex ready --specs-dir ...` 檢查已滿足條件，再進入 `cortex tick`。
 
