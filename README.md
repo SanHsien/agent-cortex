@@ -1,5 +1,7 @@
 # agent-cortex
 
+**語言：繁體中文 | [English](README.en.md)**
+
 **Windows-first control plane for governed AI coding workflows.**
 
 `paulsha-cortex` 把多 Agent 工程流程中最容易失真的部分集中成一個 vendor-neutral 控制面：從工作規格、派工、重試，到 deterministic verification、independent review、delivery 與 completion evidence，都由同一套 lifecycle authority 管理。

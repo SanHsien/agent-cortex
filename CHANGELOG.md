@@ -7,6 +7,9 @@
 
 ## [Unreleased]
 
+### Added
+- 新增 `README.en.md`（`README.md` 的英文對照版）並在兩份 README 開頭加上語言互連；內容為既有文字的翻譯，`README.md` 仍是權威版本。
+
 ### Fixed
 - `tools/dev_check.sh` 補上 `twine check --strict`，與 `dev_check.ps1` 對等；先前 Linux 完整驗證不檢查發行包中繼資料。
 - `check_dependency_freshness.py --strict` 不再把已有 `# freshness-hold:` 或未過期延後的過期下限當成失敗，與報告狀態和 `needs_attention` 一致。
